@@ -12,7 +12,7 @@ protocol DesignPatternUseCaseProtocol {
     func getPatternsFiltered(byName: String) -> [DesignPattern]
     func getPatternsFiltered(byType: DesignPatternType) -> [DesignPattern]
     func getPatternsFiltered(byName: String, byType: DesignPatternType) -> [DesignPattern]
-    func addPattern(_ pattern: DesignPattern)
+    func addPattern(name: String, type: DesignPatternType, description: String) throws
 }
 
 class DesignPatternUseCase<Filter: FilterProtocol>: DesignPatternUseCaseProtocol where Filter.T == DesignPattern {
@@ -47,7 +47,13 @@ class DesignPatternUseCase<Filter: FilterProtocol>: DesignPatternUseCaseProtocol
         return filter.filter(items: patterns, with: spec)
     }
     
-    func addPattern(_ pattern: DesignPattern) {
-        repository.addPattern(pattern)
+    func addPattern(name: String, type: DesignPatternType, description: String) throws {
+        let newPattern = try DesignPattern.builder()
+            .setName(name)
+            .setType(type)
+            .setDescription(description)
+            .build()
+        
+        try repository.addPattern(newPattern)
     }
 }
