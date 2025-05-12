@@ -20,6 +20,12 @@ enum DesignPatternsHardcodeArray {
             type: .creational,
             // TODO: add description
             description: "Will add later"
+        ),
+        DesignPattern(
+            name: "Abstract Factory",
+            type: .creational,
+            // TODO: add description
+            description: "Will add later"
         )
     ]
 }

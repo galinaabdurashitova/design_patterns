@@ -1,30 +1,13 @@
 //
-//  DesignPatternRepository.swift
+//  DesignPatternMocksDataSource.swift
 //  DesignPatterns
 //
-//  Created by Galina Abdurashitova on 08.05.2025.
+//  Created by Galina Abdurashitova on 12.05.2025.
 //
 
 import Foundation
 
-protocol DesignPatternRepositoryProtocol {
-    func getPattern(_ id: UUID) throws -> DesignPattern
-    func getPatterns() throws -> [DesignPattern]
-    func addPattern(_ pattern: DesignPattern) throws
-    func updatePattern(_ id: UUID, pattern: DesignPattern) throws
-}
-
-class DesignPatternRepository: DesignPatternRepositoryProtocol {
-    enum AvailableDataSource {
-        case mocks
-        case api
-    }
-    
-    let factories: [AvailableDataSource: DataSourceFactory] = [
-        .mocks: MocksDataSourceFactory(),
-        .api: APIDataSourceFactory()
-    ]
-    
+class DesignPatternMocksDataSource: DataSourceProtocol {
     func getPattern(_ id: UUID) throws -> DesignPattern {
         guard let pattern = DesignPatternsHardcodeArray.patterns.first(where: { $0.id == id }) else {
             throw DesignPatternDataSourceError.notFound
@@ -32,7 +15,7 @@ class DesignPatternRepository: DesignPatternRepositoryProtocol {
         return pattern
     }
     
-    func getPatterns() throws -> [DesignPattern] {
+    func getPatterns() -> [DesignPattern] {
         return DesignPatternsHardcodeArray.patterns
     }
     

@@ -8,10 +8,10 @@
 import Foundation
 
 protocol DesignPatternUseCaseProtocol {
-    func getPatterns() -> [DesignPattern]
-    func getPatternsFiltered(byName: String) -> [DesignPattern]
-    func getPatternsFiltered(byType: DesignPatternType) -> [DesignPattern]
-    func getPatternsFiltered(byName: String, byType: DesignPatternType) -> [DesignPattern]
+    func getPatterns() throws -> [DesignPattern]
+    func getPatternsFiltered(byName: String) throws -> [DesignPattern]
+    func getPatternsFiltered(byType: DesignPatternType) throws -> [DesignPattern]
+    func getPatternsFiltered(byName: String, byType: DesignPatternType) throws -> [DesignPattern]
     func addPattern(name: String, type: DesignPatternType, description: String) throws
 }
 
@@ -27,22 +27,22 @@ class DesignPatternUseCase<Filter: FilterProtocol>: DesignPatternUseCaseProtocol
         self.filter = filter
     }
     
-    func getPatterns() -> [DesignPattern] {
-        return repository.getPatterns()
+    func getPatterns() throws -> [DesignPattern] {
+        return try repository.getPatterns()
     }
     
-    func getPatternsFiltered(byName name: String) -> [DesignPattern] {
-        let patterns = repository.getPatterns()
+    func getPatternsFiltered(byName name: String) throws -> [DesignPattern] {
+        let patterns = try repository.getPatterns()
         return filter.filter(items: patterns, with: NameSpecification(name))
     }
     
-    func getPatternsFiltered(byType type: DesignPatternType) -> [DesignPattern] {
-        let patterns = repository.getPatterns()
+    func getPatternsFiltered(byType type: DesignPatternType) throws -> [DesignPattern] {
+        let patterns = try repository.getPatterns()
         return filter.filter(items: patterns, with: TypeSpecification(type))
     }
     
-    func getPatternsFiltered(byName name: String, byType type: DesignPatternType) -> [DesignPattern] {
-        let patterns = repository.getPatterns()
+    func getPatternsFiltered(byName name: String, byType type: DesignPatternType) throws -> [DesignPattern] {
+        let patterns = try repository.getPatterns()
         let spec = AndSpecification(NameSpecification(name), TypeSpecification(type))
         return filter.filter(items: patterns, with: spec)
     }
