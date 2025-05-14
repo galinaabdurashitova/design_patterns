@@ -9,32 +9,32 @@ import Foundation
 
 class DesignPatternMocksDataSource: DataSourceProtocol {
     func getPattern(_ id: UUID) throws -> DesignPattern {
-        guard let pattern = DesignPatternsHardcodeArray.patterns.first(where: { $0.id == id }) else {
-            throw DesignPatternDataSourceError.notFound
+        guard let pattern = MockDesignPatterns.patterns.first(where: { $0.id == id }) else {
+            throw DataSourceError.notFound
         }
         return pattern
     }
     
     func getPatterns() -> [DesignPattern] {
-        return DesignPatternsHardcodeArray.patterns
+        return MockDesignPatterns.patterns
     }
     
     func addPattern(_ pattern: DesignPattern) throws {
-        guard !DesignPatternsHardcodeArray.patterns.contains(where: { $0.id == pattern.id }) else {
-            throw DesignPatternDataSourceError.idNotUnique
+        guard !MockDesignPatterns.patterns.contains(where: { $0.id == pattern.id }) else {
+            throw DataSourceError.idNotUnique
         }
-        DesignPatternsHardcodeArray.patterns.append(pattern)
+        MockDesignPatterns.patterns.append(pattern)
     }
     
     func updatePattern(_ id: UUID, pattern: DesignPattern) throws {
-        guard let patternIndex = DesignPatternsHardcodeArray.patterns.firstIndex(where: { $0.id == id }) else {
-            throw DesignPatternDataSourceError.notFound
+        guard let patternIndex = MockDesignPatterns.patterns.firstIndex(where: { $0.id == id }) else {
+            throw DataSourceError.notFound
         }
         
-        guard !DesignPatternsHardcodeArray.patterns.contains(where: { $0.id == pattern.id }) else {
-            throw DesignPatternDataSourceError.idNotUnique
+        guard !MockDesignPatterns.patterns.contains(where: { $0.id == pattern.id }) else {
+            throw DataSourceError.idNotUnique
         }
         
-        DesignPatternsHardcodeArray.patterns[patternIndex] = pattern
+        MockDesignPatterns.patterns[patternIndex] = pattern
     }
 }

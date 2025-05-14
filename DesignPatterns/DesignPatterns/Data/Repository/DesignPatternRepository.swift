@@ -20,38 +20,30 @@ class DesignPatternRepository: DesignPatternRepositoryProtocol {
         case api
     }
     
-    let factories: [AvailableDataSource: DataSourceFactory] = [
-        .mocks: MocksDataSourceFactory(),
-        .api: APIDataSourceFactory()
-    ]
+    let dataSource: DataSourceProtocol
+    
+    init(source: AvailableDataSource = .mocks) {
+        self.dataSource = switch source {
+        case .api:
+            APIDataSourceFactory().makeDataSource()
+        case .mocks:
+            MocksDataSourceFactory().makeDataSource()
+        }
+    }
     
     func getPattern(_ id: UUID) throws -> DesignPattern {
-        guard let pattern = DesignPatternsHardcodeArray.patterns.first(where: { $0.id == id }) else {
-            throw DesignPatternDataSourceError.notFound
-        }
-        return pattern
+        return try dataSource.getPattern(id)
     }
     
     func getPatterns() throws -> [DesignPattern] {
-        return DesignPatternsHardcodeArray.patterns
+        return try dataSource.getPatterns()
     }
     
     func addPattern(_ pattern: DesignPattern) throws {
-        guard !DesignPatternsHardcodeArray.patterns.contains(where: { $0.id == pattern.id }) else {
-            throw DesignPatternDataSourceError.idNotUnique
-        }
-        DesignPatternsHardcodeArray.patterns.append(pattern)
+        try dataSource.addPattern(pattern)
     }
     
     func updatePattern(_ id: UUID, pattern: DesignPattern) throws {
-        guard let patternIndex = DesignPatternsHardcodeArray.patterns.firstIndex(where: { $0.id == id }) else {
-            throw DesignPatternDataSourceError.notFound
-        }
-        
-        guard !DesignPatternsHardcodeArray.patterns.contains(where: { $0.id == pattern.id }) else {
-            throw DesignPatternDataSourceError.idNotUnique
-        }
-        
-        DesignPatternsHardcodeArray.patterns[patternIndex] = pattern
+        try dataSource.updatePattern(id, pattern: pattern)
     }
 }

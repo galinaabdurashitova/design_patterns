@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum DesignPatternsHardcodeArray {
+enum MockDesignPatterns {
     static var patterns: [DesignPattern] = [
         DesignPattern(
             name: "Specification",

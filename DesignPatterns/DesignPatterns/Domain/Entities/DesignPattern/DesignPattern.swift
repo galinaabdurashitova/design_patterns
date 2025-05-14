@@ -12,4 +12,5 @@ struct DesignPattern: Identifiable {
     var name: String
     var type: DesignPatternType
     var description: String
+    var codeExamples: [CodeExample] = []
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum DesignPatternDataSourceError: LocalizedError, Error {
+enum DataSourceError: LocalizedError, Error {
     case notFound
     case idNotUnique
     case notImplemented
