@@ -18,12 +18,7 @@ class CodeExampleRepository: CodeExampleRepositoryProtocol {
     private let dataSource: CodeExampleDataSourceProtocol
     
     init(source: AvailableDataSource = .mocks) {
-        self.dataSource = switch source {
-        case .api:
-            APIDataSourceFactory().makeCodeExapleDataSource()
-        case .mocks:
-            MocksDataSourceFactory().makeCodeExapleDataSource()
-        }
+        self.dataSource = source.factory.makeCodeExampleDataSource()
     }
     
     func getCodeExample(_ id: UUID) async throws -> CodeExample {

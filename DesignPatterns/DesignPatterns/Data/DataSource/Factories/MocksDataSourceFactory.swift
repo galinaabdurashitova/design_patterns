@@ -14,7 +14,7 @@ class MocksDataSourceFactory: AbstractDataSourceFactory {
         return DesignPatternMocksDataSource()
     }
     
-    func makeCodeExapleDataSource() -> CodeExampleDataSourceProtocol {
+    func makeCodeExampleDataSource() -> CodeExampleDataSourceProtocol {
         return CodeExampleMocksDataSource()
     }
 }

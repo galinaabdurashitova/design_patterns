@@ -10,5 +10,5 @@ import Foundation
 protocol AbstractDataSourceFactory {
     init()
     func makeDesignPatternDataSource() -> DesignPatternDataSourceProtocol
-    func makeCodeExapleDataSource() -> CodeExampleDataSourceProtocol
+    func makeCodeExampleDataSource() -> CodeExampleDataSourceProtocol
 }

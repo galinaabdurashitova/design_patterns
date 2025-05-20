@@ -10,4 +10,13 @@ import Foundation
 enum AvailableDataSource {
     case mocks
     case api
+    
+    var factory: AbstractDataSourceFactory {
+        switch self {
+        case .mocks:
+            return MocksDataSourceFactory()
+        case .api:
+            return APIDataSourceFactory()
+        }
+    }
 }

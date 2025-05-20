@@ -18,12 +18,7 @@ class DesignPatternRepository: DesignPatternRepositoryProtocol {
     private let dataSource: DesignPatternDataSourceProtocol
     
     init(source: AvailableDataSource = .mocks) {
-        self.dataSource = switch source {
-        case .api:
-            APIDataSourceFactory().makeDesignPatternDataSource()
-        case .mocks:
-            MocksDataSourceFactory().makeDesignPatternDataSource()
-        }
+        self.dataSource = source.factory.makeDesignPatternDataSource()
     }
     
     func getPattern(_ id: UUID) async throws -> DesignPattern {

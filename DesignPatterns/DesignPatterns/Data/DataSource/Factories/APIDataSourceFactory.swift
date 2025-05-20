@@ -16,7 +16,7 @@ class APIDataSourceFactory: AbstractDataSourceFactory {
         return DesignPatternAPIDataSource(baseURL: baseURL)
     }
     
-    func makeCodeExapleDataSource() -> CodeExampleDataSourceProtocol {
+    func makeCodeExampleDataSource() -> CodeExampleDataSourceProtocol {
         return CodeExampleAPIDataSource(baseURL: baseURL)
     }
 }
