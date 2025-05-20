@@ -7,12 +7,16 @@
 
 import Foundation
 
-class APIDataSourceFactory: DataSourceFactory {
+class APIDataSourceFactory: AbstractDataSourceFactory {
     required init() { }
     
     let baseURL = URL(string: "https://api.com")!
     
-    func makeDataSource() -> DataSourceProtocol {
+    func makeDesignPatternDataSource() -> DesignPatternDataSourceProtocol {
         return DesignPatternAPIDataSource(baseURL: baseURL)
+    }
+    
+    func makeCodeExapleDataSource() -> CodeExampleDataSourceProtocol {
+        return CodeExampleAPIDataSource(baseURL: baseURL)
     }
 }

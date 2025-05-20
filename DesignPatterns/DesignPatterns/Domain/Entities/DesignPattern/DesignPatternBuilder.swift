@@ -15,7 +15,6 @@ extension DesignPattern {
         private var name: String = ""
         private var type: DesignPatternType = .behavioral
         private var description: String = ""
-        private var codeExamples: [String] = []
         
         func setName(_ name: String) -> Self {
             self.name = name
@@ -32,11 +31,6 @@ extension DesignPattern {
             return self
         }
         
-        func addCodeExample(_ code: String) -> Self {
-            self.codeExamples.append(code)
-            return self
-        }
-        
         func build() throws -> DesignPattern {
             guard !name.isEmpty else { throw DesignPatternError.emptyName }
             
@@ -44,8 +38,7 @@ extension DesignPattern {
                 id: id,
                 name: name,
                 type: type,
-                description: description,
-                codeExamples: codeExamples.compactMap { CodeExample(code: $0) }
+                description: description
             )
         }
     }

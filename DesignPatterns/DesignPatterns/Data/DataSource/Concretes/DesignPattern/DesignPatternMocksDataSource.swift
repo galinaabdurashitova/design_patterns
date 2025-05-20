@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DesignPatternMocksDataSource: DataSourceProtocol {
+class DesignPatternMocksDataSource: DesignPatternDataSourceProtocol {
     func getPattern(_ id: UUID) throws -> DesignPattern {
         guard let pattern = MockDesignPatterns.patterns.first(where: { $0.id == id }) else {
             throw DataSourceError.notFound
@@ -29,10 +29,6 @@ class DesignPatternMocksDataSource: DataSourceProtocol {
     func updatePattern(_ id: UUID, pattern: DesignPattern) throws {
         guard let patternIndex = MockDesignPatterns.patterns.firstIndex(where: { $0.id == id }) else {
             throw DataSourceError.notFound
-        }
-        
-        guard !MockDesignPatterns.patterns.contains(where: { $0.id == pattern.id }) else {
-            throw DataSourceError.idNotUnique
         }
         
         MockDesignPatterns.patterns[patternIndex] = pattern

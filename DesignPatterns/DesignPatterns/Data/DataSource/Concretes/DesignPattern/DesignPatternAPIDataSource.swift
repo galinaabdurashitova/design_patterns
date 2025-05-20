@@ -7,26 +7,26 @@
 
 import Foundation
 
-class DesignPatternAPIDataSource: DataSourceProtocol {
+class DesignPatternAPIDataSource: DesignPatternDataSourceProtocol {
     let baseURL: URL
     
     init(baseURL: URL) {
         self.baseURL = baseURL
     }
     
-    func getPattern(_ id: UUID) throws -> DesignPattern {
+    func getPattern(_ id: UUID) async throws -> DesignPattern {
         throw DataSourceError.notImplemented
     }
     
-    func getPatterns() throws -> [DesignPattern] {
+    func getPatterns() async throws -> [DesignPattern] {
         throw DataSourceError.notImplemented
     }
     
-    func addPattern(_ pattern: DesignPattern) throws {
+    func addPattern(_ pattern: DesignPattern) async throws {
         throw DataSourceError.notImplemented
     }
     
-    func updatePattern(_ id: UUID, pattern: DesignPattern) throws {
+    func updatePattern(_ id: UUID, pattern: DesignPattern) async throws {
         throw DataSourceError.notImplemented
     }
 }

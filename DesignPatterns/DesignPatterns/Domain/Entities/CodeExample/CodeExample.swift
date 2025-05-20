@@ -9,5 +9,6 @@ import Foundation
 
 struct CodeExample {
     var id: UUID = UUID()
+    var patternId: UUID
     var code: String
 }

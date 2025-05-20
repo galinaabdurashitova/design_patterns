@@ -14,7 +14,7 @@ enum DataSourceError: LocalizedError, Error {
     
     var errorDescription: String? {
         switch self {
-        case .notFound: return "Pattern not found"
+        case .notFound: return "Item not found"
         case .idNotUnique: return "ID not unique"
         case .notImplemented: return "Not implemented"
         }

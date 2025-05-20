@@ -8,42 +8,37 @@
 import Foundation
 
 protocol DesignPatternRepositoryProtocol {
-    func getPattern(_ id: UUID) throws -> DesignPattern
-    func getPatterns() throws -> [DesignPattern]
-    func addPattern(_ pattern: DesignPattern) throws
-    func updatePattern(_ id: UUID, pattern: DesignPattern) throws
+    func getPattern(_ id: UUID) async throws -> DesignPattern
+    func getPatterns() async throws -> [DesignPattern]
+    func addPattern(_ pattern: DesignPattern) async throws
+    func updatePattern(_ id: UUID, pattern: DesignPattern) async throws
 }
 
 class DesignPatternRepository: DesignPatternRepositoryProtocol {
-    enum AvailableDataSource {
-        case mocks
-        case api
-    }
-    
-    let dataSource: DataSourceProtocol
+    private let dataSource: DesignPatternDataSourceProtocol
     
     init(source: AvailableDataSource = .mocks) {
         self.dataSource = switch source {
         case .api:
-            APIDataSourceFactory().makeDataSource()
+            APIDataSourceFactory().makeDesignPatternDataSource()
         case .mocks:
-            MocksDataSourceFactory().makeDataSource()
+            MocksDataSourceFactory().makeDesignPatternDataSource()
         }
     }
     
-    func getPattern(_ id: UUID) throws -> DesignPattern {
-        return try dataSource.getPattern(id)
+    func getPattern(_ id: UUID) async throws -> DesignPattern {
+        return try await dataSource.getPattern(id)
     }
     
-    func getPatterns() throws -> [DesignPattern] {
-        return try dataSource.getPatterns()
+    func getPatterns() async throws -> [DesignPattern] {
+        return try await dataSource.getPatterns()
     }
     
-    func addPattern(_ pattern: DesignPattern) throws {
-        try dataSource.addPattern(pattern)
+    func addPattern(_ pattern: DesignPattern) async throws {
+        try await dataSource.addPattern(pattern)
     }
     
-    func updatePattern(_ id: UUID, pattern: DesignPattern) throws {
-        try dataSource.updatePattern(id, pattern: pattern)
+    func updatePattern(_ id: UUID, pattern: DesignPattern) async throws {
+        try await dataSource.updatePattern(id, pattern: pattern)
     }
 }

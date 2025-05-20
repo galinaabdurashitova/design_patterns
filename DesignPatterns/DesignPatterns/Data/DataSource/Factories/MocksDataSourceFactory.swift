@@ -7,9 +7,14 @@
 
 import Foundation
 
-class MocksDataSourceFactory: DataSourceFactory {
+class MocksDataSourceFactory: AbstractDataSourceFactory {
     required init() { }
-    func makeDataSource() -> DataSourceProtocol {
+    
+    func makeDesignPatternDataSource() -> DesignPatternDataSourceProtocol {
         return DesignPatternMocksDataSource()
+    }
+    
+    func makeCodeExapleDataSource() -> CodeExampleDataSourceProtocol {
+        return CodeExampleMocksDataSource()
     }
 }
