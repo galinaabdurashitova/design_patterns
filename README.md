@@ -1,4 +1,4 @@
-# 🧠 DesignPatterns App (SwiftUI + Clean Architecture) - currently WIP
+# DesignPatterns App (SwiftUI + Clean Architecture) - currently WIP
 
 This is a demo iOS application built with **SwiftUI** that demonstrates the **real-world use of software design patterns** in a clean, modular architecture.
 
