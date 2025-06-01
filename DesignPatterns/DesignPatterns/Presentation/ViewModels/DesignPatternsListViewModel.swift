@@ -10,6 +10,7 @@ import Foundation
 @MainActor
 class DesignPatternsListViewModel: ObservableObject {
     @Published var designPatternsState: UIState<[DesignPattern]> = .idle
+    @Published var selectedPattern: DesignPattern?
     
     private let useCase: DesignPatternUseCaseProtocol
     

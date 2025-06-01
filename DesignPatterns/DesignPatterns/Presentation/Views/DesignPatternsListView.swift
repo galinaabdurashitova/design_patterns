@@ -12,14 +12,22 @@ struct DesignPatternsListView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            Text(LocalizedStringKey("Design Patterns"))
-                .font(.title)
-                .bold()
-                .accessibilityIdentifier("designPatternsTitle")
+            screenHeader
             
             listContentView
         }
+        .background { BackgroundGradient() }
         .onAppear(perform: loadScreenData)
+        .blur(radius: viewModel.selectedPattern != nil ? 5 : 0)
+        .disabled(viewModel.selectedPattern != nil)
+        .patternViewOverlay($viewModel.selectedPattern)
+    }
+    
+    private var screenHeader: some View {
+        Text(LocalizedStringKey("Design Patterns"))
+            .font(.system(size: 32, weight: .bold, design: .rounded))
+            .kerning(-1.2)
+            .accessibilityIdentifier("designPatternsTitle")
     }
 
     @ViewBuilder
@@ -39,16 +47,9 @@ struct DesignPatternsListView: View {
     
     private func listView(patterns: [DesignPattern]) -> some View {
         ScrollView {
-            LazyVStack(spacing: 0) {
+            LazyVStack(spacing:8) {
                 ForEach(Array(patterns.enumerated()), id: \.offset) { index, pattern in
                     patternLine(index: index, pattern: pattern)
-                        .padding(.vertical, 4)
-                        .overlay(
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(height: 1),
-                            alignment: .bottom
-                        )
                         .accessibilityIdentifier("patternRow_\(index)")
                 }
             }
@@ -57,21 +58,36 @@ struct DesignPatternsListView: View {
     }
     
     private func patternLine(index: Int, pattern: DesignPattern) -> some View {
-        HStack {
+        HStack(spacing: 8) {
             Text(String(index+1))
+                .font(.system(size: 16, weight: .black, design: .rounded))
+            
+            Button(action: {
+                viewModel.selectedPattern = pattern
+            }) {
+                HStack(spacing: 12) {
+                    Text(pattern.type.emojiIcon)
+                        .padding(8)
+                        .background(
+                            Circle()
+                                .fill(pattern.type.color)
+                        )
+                    
+                    Text(pattern.name)
+                        .font(.system(size: 18, weight: .light, design: .rounded))
+                        .foregroundColor(.black)
+                        .kerning(-0.4)
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.black)
+                }
                 .padding(8)
                 .background(
-                    Circle()
-                        .fill(.blue.opacity(0.2))
+                    Capsule().fill(Color.white.opacity(0.8))
                 )
-            
-            Image(systemName: pattern.type.iconName)
-            
-            Text(pattern.name)
-            
-            Spacer()
-            
-//            Image(systemName: "chevron.right")
+            }
         }
     }
     

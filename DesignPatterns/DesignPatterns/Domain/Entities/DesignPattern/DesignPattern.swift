@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DesignPattern: Identifiable {
+struct DesignPattern: Identifiable, Equatable {
     var id: UUID = UUID()
     var name: String
     var type: DesignPatternType
