@@ -16,6 +16,8 @@ The application was created with the goal of showcasing:
 
 - 📋 **List of software design patterns**, categorized by type
 - 🚦 **State-driven UI** using a generic `UIState<T>` enum
+- 🔍 Debounced and composable **filtering logic** via Specification pattern
+- 🧰 **Combine-driven** state observation with @Published + debounce
 - 🚀 Fully **asynchronous logic** using `async/await`
 - 🎯 SwiftUI + MVVM + DI-ready
 - 💡 Custom overlay with animation to display pattern details
@@ -39,8 +41,11 @@ You can find all patterns in action inside:
 ## 🧪 Preview of UI
 
 <p align="center">
-  <img src="screenshots/1_main_screen.png" width="200"/>
-  <img src="screenshots/2_design_pattern_view.png" width="200"/>
+  <img src="screenshots/1_main_screen.png" width="160"/>
+  <img src="screenshots/2_design_pattern_view.png" width="160"/>
+  <img src="screenshots/3_search.png" width="160"/>
+  <img src="screenshots/4_type_filter_bottom_sheet.png" width="160"/>
+  <img src="screenshots/5_type_filter_applied.png" width="160"/>
 </p>
 
 ---
@@ -50,6 +55,7 @@ You can find all patterns in action inside:
 - Swift 5.10
 - SwiftUI
 - MVVM
+- Combine (for state observation and filtering)
 - Swift Concurrency (`async/await`)
 - Dependency Inversion & Protocol-Oriented Design
 
