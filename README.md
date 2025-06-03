@@ -16,12 +16,10 @@ The application was created with the goal of showcasing:
 
 - 📋 **List of software design patterns**, categorized by type
 - 🚦 **State-driven UI** using a generic `UIState<T>` enum
-- 📡 Support for **multiple data sources** (mock & API) via abstract factories
-- 🧪 **Specification pattern** for filtering logic
-- 🏗️ **Builder pattern** for creating design pattern models
-- 🧰 **Repository pattern** to decouple use cases from data source implementations
 - 🚀 Fully **asynchronous logic** using `async/await`
 - 🎯 SwiftUI + MVVM + DI-ready
+- 💡 Custom overlay with animation to display pattern details
+- 🎨 Visual styling based on pattern type (emoji, color, icon)
 
 ---
 
@@ -40,7 +38,10 @@ You can find all patterns in action inside:
 
 ## 🧪 Preview of UI
 
-> Will be added later.
+<p align="center">
+  <img src="screenshots/1_main_screen.png" width="200"/>
+  <img src="screenshots/2_design_pattern_view.png" width="200"/>
+</p>
 
 ---
 
