@@ -8,21 +8,27 @@
 import SwiftUI
 
 struct DesignPatternsListView: View {
+    // MARK: - Properties
     @StateObject var viewModel: DesignPatternsListViewModel = DesignPatternsListViewModel()
     
+    // MARK: - View
     var body: some View {
         VStack(spacing: 12) {
             screenHeader
             
+            searchLine
+                .padding(.horizontal)
+                
             listContentView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .blur(radius: viewModel.isTypeFilterSheetPresented ? 5 : 0)
         .background { BackgroundGradient() }
         .onAppear(perform: loadScreenData)
-        .blur(radius: viewModel.selectedPattern != nil ? 5 : 0)
-        .disabled(viewModel.selectedPattern != nil)
         .patternViewOverlay($viewModel.selectedPattern)
     }
     
+    // MARK: - Sub Views
     private var screenHeader: some View {
         Text(LocalizedStringKey("Design Patterns"))
             .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -36,7 +42,10 @@ struct DesignPatternsListView: View {
         case .idle, .loading:
             ProgressView()
         case .error(let error):
-            errorView(error: error)
+            ErrorView(
+                errorDescription: "An error occured loading patterns: \(error.localizedDescription)",
+                reloaadAction: viewModel.fetchDesignPatterns
+            )
         case .success(let patterns) where patterns.isEmpty:
             Text("No design patterns found.")
                 .opacity(0.6)
@@ -53,10 +62,58 @@ struct DesignPatternsListView: View {
                         .accessibilityIdentifier("patternRow_\(index)")
                 }
             }
-            .padding()
+            .padding(.horizontal)
         }
     }
     
+    // MARK: Search
+    private var searchLine: some View {
+        HStack(spacing: 8) {
+            SearchTextField(
+                searchText: $viewModel.searchText,
+                searchHint: "Search patterns"
+            )
+            
+            typeFilterButton
+        }
+    }
+    
+    private var typeFilterButton: some View {
+        Button(action: {
+            viewModel.isTypeFilterSheetPresented = true
+        }) {
+            HStack(spacing: 4) {
+                Image(systemName: "line.3.horizontal.decrease")
+                    .fontWeight(viewModel.selectedTypes.isEmpty ? .light : .medium)
+                
+                switch viewModel.selectedTypes.count {
+                case 0:
+                    Text("Type")
+                        .fontWeight(.light)
+                        .opacity(0.4)
+                case 1:
+                    Text(viewModel.selectedTypes[0].name)
+                        .fontWeight(.medium)
+                        .fontWidth(.condensed)
+                default:
+                    Text("\(viewModel.selectedTypes.count) types")
+                        .fontWeight(.medium)
+                        .fontWidth(.condensed)
+                }
+            }
+            .foregroundColor(.black)
+            .filterFieldStyle(
+                cornerRadius: 36,
+                lineWidth: viewModel.selectedTypes.isEmpty ? 0.5 : 2
+            )
+        }
+        .typeFilterSheet(
+            isPresented: $viewModel.isTypeFilterSheetPresented,
+            selectedTypes: $viewModel.selectedTypes
+        )
+    }
+    
+    // MARK: Pattern line
     private func patternLine(index: Int, pattern: DesignPattern) -> some View {
         HStack(spacing: 8) {
             Text(String(index+1))
@@ -91,26 +148,7 @@ struct DesignPatternsListView: View {
         }
     }
     
-    private func errorView(error: Error) -> some View {
-        VStack {
-            Text("An error occured loading patterns: \(error.localizedDescription)")
-                .opacity(0.6)
-                .multilineTextAlignment(.center)
-            
-            Button(action: viewModel.fetchDesignPatterns) {
-                Text("Try again")
-                    .foregroundColor(.white)
-                    .padding(.vertical, 12)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(.gray)
-                    )
-            }
-        }
-        .padding()
-    }
-    
+    // MARK: - Methods
     private func loadScreenData() {
         if case .idle = viewModel.designPatternsState {
             viewModel.fetchDesignPatterns()
@@ -118,6 +156,7 @@ struct DesignPatternsListView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     DesignPatternsListView(viewModel: DesignPatternsListViewModel())
 }

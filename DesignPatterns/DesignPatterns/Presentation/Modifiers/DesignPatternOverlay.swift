@@ -20,6 +20,8 @@ struct DesignPatternOverlay: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .blur(radius: selectedPattern != nil ? 5 : 0)
+            .disabled(selectedPattern != nil)
             .overlay(alignment: .bottom) {
                 if let selectedPattern = selectedPattern {
                     DesignPatternView(selectedPattern: selectedPattern) {

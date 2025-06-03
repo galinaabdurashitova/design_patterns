@@ -9,9 +9,7 @@ import Foundation
 
 protocol DesignPatternUseCaseProtocol {
     func getPatterns() async throws -> [DesignPattern]
-    func getPatternsFiltered(byName: String) async throws -> [DesignPattern]
-    func getPatternsFiltered(byType: DesignPatternType) async throws -> [DesignPattern]
-    func getPatternsFiltered(byName: String, byType: DesignPatternType) async throws -> [DesignPattern]
+    func getPatternsFiltered(byName: String, byTypes: [DesignPatternType]) async throws -> [DesignPattern]
     func addPattern(name: String, type: DesignPatternType, description: String, codeExamples: [String]) async throws
 }
 
@@ -34,20 +32,22 @@ class DesignPatternUseCase<Filter: FilterProtocol>: DesignPatternUseCaseProtocol
         return try await designPatternRepository.getPatterns()
     }
     
-    func getPatternsFiltered(byName name: String) async throws -> [DesignPattern] {
+    func getPatternsFiltered(byName name: String, byTypes types: [DesignPatternType]) async throws -> [DesignPattern] {
         let patterns = try await designPatternRepository.getPatterns()
-        return filter.filter(items: patterns, with: NameSpecification(name))
-    }
-    
-    func getPatternsFiltered(byType type: DesignPatternType) async throws -> [DesignPattern] {
-        let patterns = try await designPatternRepository.getPatterns()
-        return filter.filter(items: patterns, with: TypeSpecification(type))
-    }
-    
-    func getPatternsFiltered(byName name: String, byType type: DesignPatternType) async throws -> [DesignPattern] {
-        let patterns = try await designPatternRepository.getPatterns()
-        let spec = AndSpecification(NameSpecification(name), TypeSpecification(type))
-        return filter.filter(items: patterns, with: spec)
+        
+        if !name.isEmpty, !types.isEmpty {
+            let spec = AndSpecification(NameSpecification(name), MultipleTypesSpecification(types))
+            return filter.filter(items: patterns, with: spec)
+            
+        } else if !name.isEmpty {
+            return filter.filter(items: patterns, with: NameSpecification(name))
+            
+        } else if !types.isEmpty {
+            return filter.filter(items: patterns, with: MultipleTypesSpecification(types))
+            
+        } else {
+            return patterns
+        }
     }
     
     func addPattern(name: String, type: DesignPatternType, description: String, codeExamples: [String]) async throws {
