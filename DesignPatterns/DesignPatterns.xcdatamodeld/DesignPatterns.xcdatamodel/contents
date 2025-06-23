@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CodeExampleEntity" representedClassName="CodeExampleEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="code" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="designPatternRelationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DesignPatternEntity" inverseName="codeExampleRelationship" inverseEntity="DesignPatternEntity"/>
+    </entity>
+    <entity name="DesignPatternEntity" representedClassName="DesignPatternEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="patternDescription" attributeType="String"/>
+        <attribute name="type" attributeType="String"/>
+        <relationship name="codeExampleRelationship" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CodeExampleEntity" inverseName="designPatternRelationship" inverseEntity="CodeExampleEntity"/>
+    </entity>
+</model>

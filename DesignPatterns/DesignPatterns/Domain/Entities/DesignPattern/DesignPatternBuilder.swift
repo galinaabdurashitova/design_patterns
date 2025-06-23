@@ -38,7 +38,7 @@ extension DesignPattern {
                 id: id,
                 name: name,
                 type: type,
-                description: description
+                patternDescription: description
             )
         }
     }

@@ -7,8 +7,10 @@
 
 import Foundation
 
-enum DesignPatternType: CaseIterable {
-    case creational, structural, behavioral
+enum DesignPatternType: String, CaseIterable {
+    case creational = "creational"
+    case structural = "structural"
+    case behavioral = "behavioral"
     
     var name: String {
         switch self {

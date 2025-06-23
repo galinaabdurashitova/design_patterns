@@ -11,5 +11,5 @@ struct DesignPattern: Identifiable, Equatable {
     var id: UUID = UUID()
     var name: String
     var type: DesignPatternType
-    var description: String
+    var patternDescription: String
 }

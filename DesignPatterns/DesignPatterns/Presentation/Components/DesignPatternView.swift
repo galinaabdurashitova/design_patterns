@@ -35,7 +35,7 @@ struct DesignPatternView: View {
     }
     
     private var patternDescriptionText: some View {
-        Text(selectedPattern.description)
+        Text(selectedPattern.patternDescription)
             .font(.system(size: 18, weight: .light, design: .rounded))
             .frame(maxWidth: .infinity, alignment: .leading)
     }

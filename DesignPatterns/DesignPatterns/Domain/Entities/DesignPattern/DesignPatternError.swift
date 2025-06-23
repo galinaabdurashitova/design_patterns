@@ -8,12 +8,18 @@
 import Foundation
 
 enum DesignPatternError: LocalizedError, Error {
-    case emptyName
+    case emptyName, emptyId, emptyDescrition, invalidType
     
     var errorDescription: String? {
         switch self {
         case .emptyName:
             return "Name cannot be empty"
+        case .emptyId:
+            return "Id cannot be empty"
+        case .emptyDescrition:
+            return "Description cannot be empty"
+        case .invalidType:
+            return "Invalid type"
         }
     }
 }
