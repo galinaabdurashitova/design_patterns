@@ -18,6 +18,7 @@ class DesignPatternCoreDataDataSource: DesignPatternDataSourceProtocol {
     func getPattern(_ id: UUID) throws -> DesignPattern {
         let request = DesignPatternEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        request.fetchLimit = 1
         guard let entity = try container.viewContext.fetch(request).first else { throw DataSourceError.notFound }
         return try DesignPatternMapper.from(entity: entity)
     }
@@ -37,10 +38,7 @@ class DesignPatternCoreDataDataSource: DesignPatternDataSourceProtocol {
         let request = DesignPatternEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         request.fetchLimit = 1
-
-        guard let entity = try container.viewContext.fetch(request).first else {
-            throw DataSourceError.notFound
-        }
+        guard let entity = try container.viewContext.fetch(request).first else { throw DataSourceError.notFound }
 
         entity.name = pattern.name
         entity.patternDescription = pattern.patternDescription

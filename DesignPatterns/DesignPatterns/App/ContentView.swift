@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        DesignPatternsListView(viewModel: DesignPatternsListViewModel())
+        DesignPatternsListView(viewModel: ViewModelFactory.makeDesignPatternsListViewModel())
     }
 }
 

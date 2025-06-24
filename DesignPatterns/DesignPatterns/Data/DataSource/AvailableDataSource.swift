@@ -8,8 +8,7 @@
 import Foundation
 
 enum AvailableDataSource {
-    case mocks
-    case api
+    case mocks, api, coreData
     
     var factory: AbstractDataSourceFactory {
         switch self {
@@ -17,6 +16,8 @@ enum AvailableDataSource {
             return MocksDataSourceFactory()
         case .api:
             return APIDataSourceFactory()
+        case .coreData:
+            return CoreDataDataSourceFactory()
         }
     }
 }
