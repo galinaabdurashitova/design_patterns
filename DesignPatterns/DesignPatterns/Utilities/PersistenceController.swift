@@ -46,9 +46,8 @@ class PersistenceController {
                 let newPattern = DesignPatternEntity(context: context)
                 newPattern.id = pattern.id
                 newPattern.name = pattern.name
+                newPattern.patternDescription = pattern.patternDescription
                 newPattern.type = pattern.type.rawValue
-                
-                try? context.save()
                 
                 for codeExample in MockCodeExamples.codeExamples where codeExample.id == pattern.id {
                     let newCodeExample = CodeExampleEntity(context: context)
@@ -56,15 +55,9 @@ class PersistenceController {
                     newCodeExample.code = codeExample.code
                     newCodeExample.designPatternRelationship = newPattern
                 }
-                
-                try? context.save()
             }
             
-//            do {
-//                try context.save()
-//            } catch {
-//                print(error.localizedDescription)
-//            }
+            try? context.save()
         }
     }
 }
