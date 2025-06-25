@@ -13,7 +13,7 @@ protocol CoreDataServiceProtocol {
     func fetchOne<T: NSManagedObject>(_ request: NSFetchRequest<T>) throws -> T?
     func saveIfNeeded() throws
     func create<T: NSManagedObject>(_ type: T.Type) -> T
-    delete<T: NSManagedObject>(_ object: T) throws
+    func delete<T: NSManagedObject>(_ object: T) throws
 }
 
 class CoreDataService: CoreDataServiceProtocol {
