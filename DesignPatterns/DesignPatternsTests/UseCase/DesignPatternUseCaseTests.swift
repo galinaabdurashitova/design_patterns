@@ -9,28 +9,68 @@ import XCTest
 @testable import DesignPatterns
 
 final class DesignPatternUseCaseTests: XCTestCase {
+    private var mockCodeExampleRepository: MockCodeExampleRepository!
+    private var mockDesignPatternRepository: MockDesignPatternRepository!
+    private var mockFilter: MockFilter!
+    private var useCase: DesignPatternUseCase<MockFilter>!
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    override func setUp() {
+        super.setUp()
+        mockCodeExampleRepository = MockCodeExampleRepository()
+        mockDesignPatternRepository = MockDesignPatternRepository()
+        mockFilter = MockFilter()
+        useCase = DesignPatternUseCase(
+            repository: mockDesignPatternRepository,
+            codeExampleRepository: mockCodeExampleRepository,
+            filter: mockFilter
+        )
+    }
+    
+    func test_getPatterns_success() async throws {
+        mockDesignPatternRepository.throwError = false
+        let patterns = try await useCase.getPatterns()
+        XCTAssertEqual(patterns.count, MockTestDesignPatterns.patterns.count)
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func test_getPatterns_throwError() async {
+        mockDesignPatternRepository.throwError = true
+        do {
+            _ = try await useCase.getPatterns()
+            XCTFail("Expected error but got success")
+        } catch {
+            XCTAssertTrue(error is TestError)
         }
     }
-
+    
+    func test_getPatternsFiltered_withNameAndType_success() async throws {
+        mockDesignPatternRepository.throwError = false
+        mockFilter.filteredResult = [MockTestDesignPatterns.patterns[1]]
+        let patterns = try await useCase.getPatternsFiltered(byName: "E", byTypes: [.creational])
+        XCTAssertEqual(patterns.count, 1)
+        XCTAssertEqual(patterns[0].name, "Builder")
+        XCTAssertEqual(
+            mockFilter.receivedSpecificationType,
+            "AndSpecification<DesignPattern, NameSpecification, MultipleTypesSpecification>"
+        )
+    }
+    
+    func test_getPatternsFiltered_withName_success() async throws {
+        mockDesignPatternRepository.throwError = false
+        #warning("Finish test")
+    }
+    
+    func test_getPatternsFiltered_withType_success() async throws {
+        mockDesignPatternRepository.throwError = false
+        #warning("Finish test")
+    }
+    
+    func test_getPatternsFiltered_throwError() async throws {
+        mockDesignPatternRepository.throwError = true
+        do {
+            _ = try await useCase.getPatternsFiltered(byName: "", byTypes: [])
+            XCTFail("Expected error but got success")
+        } catch {
+            XCTAssertTrue(error is TestError)
+        }
+    }
 }
