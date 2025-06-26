@@ -54,6 +54,7 @@ class DesignPatternUseCase<Filter: FilterProtocol>: DesignPatternUseCaseProtocol
         let newPattern = try DesignPattern.builder()
             .setName(name)
             .setType(type)
+            .setDescription(description)
             .build()
         
         try await designPatternRepository.addPattern(newPattern)
