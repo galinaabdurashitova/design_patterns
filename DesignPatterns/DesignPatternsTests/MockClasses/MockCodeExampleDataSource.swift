@@ -21,7 +21,7 @@ class MockCodeExampleDataSource: CodeExampleDataSourceProtocol {
     
     func getCodeExamples(patternId: UUID) throws -> [CodeExample] {
         if throwError { throw TestError.sample }
-        return examples
+        return examples.filter { $0.patternId == patternId }
     }
     
     func addCodeExample(_ codeExample: CodeExample) async throws {

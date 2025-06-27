@@ -8,7 +8,7 @@
 import Foundation
 @testable import DesignPatterns
 
-enum MockTestDesignPatterns {
+enum TestDesignPatterns {
     static var patterns: [DesignPattern] = [
         DesignPattern(
             name: "Specification",

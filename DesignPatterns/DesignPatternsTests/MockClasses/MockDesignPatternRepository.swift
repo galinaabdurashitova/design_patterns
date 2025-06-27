@@ -9,7 +9,7 @@ import Foundation
 @testable import DesignPatterns
 
 class MockDesignPatternRepository: DesignPatternRepositoryProtocol {
-    var patterns = MockTestDesignPatterns.patterns
+    var patterns = TestDesignPatterns.patterns
     var throwError: Bool = false
     
     func getPattern(_ id: UUID) throws -> DesignPattern {
