@@ -100,5 +100,5 @@ struct TypeFilterView: View {
 }
 
 #Preview {
-    DesignPatternsListView(viewModel: DesignPatternsListViewModel())
+    DesignPatternsListView(viewModel: ViewModelFactory.makeDesignPatternsListViewModel())
 }

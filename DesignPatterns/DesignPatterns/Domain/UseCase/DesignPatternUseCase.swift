@@ -19,8 +19,8 @@ class DesignPatternUseCase<Filter: FilterProtocol>: DesignPatternUseCaseProtocol
     private let filter: Filter
     
     init(
-        repository: DesignPatternRepositoryProtocol = DesignPatternRepository(),
-        codeExampleRepository: CodeExampleRepositoryProtocol = CodeExampleRepository(),
+        repository: DesignPatternRepositoryProtocol,
+        codeExampleRepository: CodeExampleRepositoryProtocol,
         filter: Filter = DesignPatternFilter()
     ) {
         self.designPatternRepository = repository

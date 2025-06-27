@@ -23,7 +23,7 @@ class DesignPatternsListViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let debounceIntervalMs: Int = 600
     
-    init(useCase: DesignPatternUseCaseProtocol = DesignPatternUseCase()) {
+    init(useCase: DesignPatternUseCaseProtocol) {
         self.useCase = useCase
         bindSearch()
     }

@@ -20,4 +20,12 @@ enum AvailableDataSource {
             return CoreDataDataSourceFactory()
         }
     }
+    
+    func makeDesignPatternDataSource() -> DesignPatternDataSourceProtocol {
+        return factory.makeDesignPatternDataSource()
+    }
+
+    func makeCodeExampleDataSource() -> CodeExampleDataSourceProtocol {
+        return factory.makeCodeExampleDataSource()
+    }
 }

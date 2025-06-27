@@ -36,5 +36,5 @@ struct DesignPatternOverlay: ViewModifier {
 }
 
 #Preview {
-    DesignPatternsListView(viewModel: DesignPatternsListViewModel())
+    DesignPatternsListView(viewModel: ViewModelFactory.makeDesignPatternsListViewModel())
 }

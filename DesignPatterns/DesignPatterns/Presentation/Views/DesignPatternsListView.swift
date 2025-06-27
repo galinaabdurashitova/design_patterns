@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DesignPatternsListView: View {
     // MARK: - Properties
-    @StateObject var viewModel: DesignPatternsListViewModel = DesignPatternsListViewModel()
+    @StateObject var viewModel: DesignPatternsListViewModel
     
     // MARK: - View
     var body: some View {
@@ -158,5 +158,5 @@ struct DesignPatternsListView: View {
 
 // MARK: - Preview
 #Preview {
-    DesignPatternsListView(viewModel: DesignPatternsListViewModel())
+    DesignPatternsListView(viewModel: ViewModelFactory.makeDesignPatternsListViewModel())
 }

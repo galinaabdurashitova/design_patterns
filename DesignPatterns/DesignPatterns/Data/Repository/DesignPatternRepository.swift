@@ -17,8 +17,8 @@ protocol DesignPatternRepositoryProtocol {
 class DesignPatternRepository: DesignPatternRepositoryProtocol {
     private let dataSource: DesignPatternDataSourceProtocol
     
-    init(source: AvailableDataSource = .mocks) {
-        self.dataSource = source.factory.makeDesignPatternDataSource()
+    init(dataSource: DesignPatternDataSourceProtocol) {
+        self.dataSource = dataSource
     }
     
     func getPattern(_ id: UUID) async throws -> DesignPattern {
