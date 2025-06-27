@@ -31,7 +31,7 @@ final class CodeExampleRepositoryTests: XCTestCase {
         XCTAssertEqual(codeExample.patternId, testPattern.id)
     }
     
-    func test_getCodeExampleWithId_withUnknownId_throwsNotFound() async throws {
+    func test_getCodeExampleWithId_withUnknownId_throwsNotFound() async {
         do {
             _ = try await repository.getCodeExample(UUID())
             XCTFail("Expected error but got success")
@@ -52,7 +52,7 @@ final class CodeExampleRepositoryTests: XCTestCase {
         XCTAssertEqual(codeExamples.count, 0)
     }
     
-    func test_getCodeExamples_whenDataSourceThrowsError_throwsError() async throws {
+    func test_getCodeExamples_whenDataSourceThrowsError_throwsError() async {
         mockDataSource.throwError = true
         do {
             _ = try await repository.getCodeExamples(patternId: UUID())
@@ -72,7 +72,7 @@ final class CodeExampleRepositoryTests: XCTestCase {
         XCTAssertEqual(newCodeExample.code, "// More code")
     }
     
-    func test_addCodeExample_whenDataSourceThrowsError_throwsError() async throws {
+    func test_addCodeExample_whenDataSourceThrowsError_throwsError() async {
         mockDataSource.throwError = true
         do {
             try await repository.addCodeExample("// More code", for: testPattern.id)
@@ -97,7 +97,7 @@ final class CodeExampleRepositoryTests: XCTestCase {
         XCTAssertEqual(updatedCodeExample.patternId, testPattern.id)
     }
     
-    func test_updateCodeExample_withUnknownId_throwsNotFound() async throws {
+    func test_updateCodeExample_withUnknownId_throwsNotFound() async {
         do {
             try await repository.updateCodeExample(
                 UUID(),

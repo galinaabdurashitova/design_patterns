@@ -23,7 +23,7 @@ final class DesignPatternRepositoryTests: XCTestCase {
         XCTAssertEqual(pattern, TestDesignPatterns.patterns.first!)
     }
     
-    func test_getPatternWithId_withUnknownId_throwsNotFound() async throws {
+    func test_getPatternWithId_withUnknownId_throwsNotFound() async {
         do {
             _ = try await repository.getPattern(UUID())
             XCTFail("Expected error but got success")
@@ -37,7 +37,7 @@ final class DesignPatternRepositoryTests: XCTestCase {
         XCTAssertEqual(patterns.count, TestDesignPatterns.patterns.count)
     }
     
-    func test_getPatterns_whenDataSourceThrowsError_throwsError() async throws {
+    func test_getPatterns_whenDataSourceThrowsError_throwsError() async {
         mockDataSource.throwError = true
         do {
             _ = try await repository.getPatterns()
@@ -60,7 +60,7 @@ final class DesignPatternRepositoryTests: XCTestCase {
         XCTAssertEqual(newPattern.patternDescription, "A")
     }
     
-    func test_addPattern_whenDataSourceThrowsError_throwsError() async throws {
+    func test_addPattern_whenDataSourceThrowsError_throwsError() async {
         mockDataSource.throwError = true
         let newPatten = DesignPattern(name: "Test", type: .behavioral, patternDescription: "A")
         do {
@@ -84,7 +84,7 @@ final class DesignPatternRepositoryTests: XCTestCase {
         XCTAssertEqual(updatedPattern.patternDescription, "A")
     }
     
-    func test_updatePattern_withUnknownId_throwsNotFound() async throws {
+    func test_updatePattern_withUnknownId_throwsNotFound() async {
         let newPatten = DesignPattern(name: "Test", type: .behavioral, patternDescription: "A")
         do {
             try await repository.updatePattern(UUID(), pattern: newPatten)

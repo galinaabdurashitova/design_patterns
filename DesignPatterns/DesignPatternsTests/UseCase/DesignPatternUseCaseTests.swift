@@ -74,7 +74,7 @@ final class DesignPatternUseCaseTests: XCTestCase {
         )
     }
     
-    func test_getPatternsFiltered_throwError() async throws {
+    func test_getPatternsFiltered_throwError() async {
         mockDesignPatternRepository.throwError = true
         do {
             _ = try await useCase.getPatternsFiltered(byName: "", byTypes: [])
@@ -99,7 +99,7 @@ final class DesignPatternUseCaseTests: XCTestCase {
         XCTAssertEqual(mockCodeExampleRepository.examples[0].patternId, newPattern.id)
     }
     
-    func test_addPattern_withBuilderError() async throws {
+    func test_addPattern_withBuilderError() async {
         do {
             try await useCase.addPattern(name: "", type: .behavioral, description: "", codeExamples: [])
             XCTFail("Expected error but got success")
@@ -108,7 +108,7 @@ final class DesignPatternUseCaseTests: XCTestCase {
         }
     }
     
-    func test_addPattern_withRepositoryError() async throws {
+    func test_addPattern_withRepositoryError() async {
         mockDesignPatternRepository.throwError = true
         do {
             try await useCase.addPattern(name: "Test", type: .behavioral, description: "", codeExamples: [])
