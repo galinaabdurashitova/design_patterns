@@ -23,11 +23,7 @@ class DesignPatternCoreDataDataSource: DesignPatternDataSourceProtocol {
     }
 
     func getPattern(_ id: UUID) throws -> DesignPattern {
-        let request = DesignPatternEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        guard let entity = try coreData.fetchOne(request) else {
-            throw DataSourceError.notFound
-        }
+        let entity = try fetchDesignPatternEntity(with: id)
         return try DesignPatternMapper.from(entity: entity)
     }
 
@@ -37,14 +33,21 @@ class DesignPatternCoreDataDataSource: DesignPatternDataSourceProtocol {
     }
 
     func updatePattern(_ id: UUID, pattern: DesignPattern) throws {
-        let request = DesignPatternEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        guard let entity = try coreData.fetchOne(request) else {
-            throw DataSourceError.notFound
-        }
+        let entity = try fetchDesignPatternEntity(with: id)
         entity.name = pattern.name
         entity.patternDescription = pattern.patternDescription
         entity.type = pattern.type.rawValue
         try coreData.saveIfNeeded()
+    }
+    
+    // MARK: - Private functions
+    
+    private func fetchDesignPatternEntity(with id: UUID) throws -> DesignPatternEntity {
+        let patternRequest = DesignPatternEntity.fetchRequest()
+        patternRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        guard let patternEntity = try coreData.fetchOne(patternRequest) else {
+            throw DataSourceError.notFound
+        }
+        return patternEntity
     }
 }

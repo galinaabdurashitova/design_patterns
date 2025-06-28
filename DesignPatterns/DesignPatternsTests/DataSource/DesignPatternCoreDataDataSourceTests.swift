@@ -24,7 +24,6 @@ final class DesignPatternCoreDataDataSourceTests: XCTestCase {
         mockPattern.type = DesignPatternType.behavioral.rawValue
         mockPattern.patternDescription = "A"
         mockCoreData.fetchResult = [mockPattern]
-        mockCoreData.fetchOneResult = mockPattern
         
         dataSource = DesignPatternCoreDataDataSource(coreData: mockCoreData)
     }
@@ -66,7 +65,7 @@ final class DesignPatternCoreDataDataSourceTests: XCTestCase {
     
     func test_getPattern_withUnknownId_throwsNotFound() {
         do {
-            mockCoreData.fetchOneResult = nil
+            mockCoreData.fetchResult = [ ]
             _ = try dataSource.getPattern(UUID())
             XCTFail("Expected error but got success")
         } catch {
@@ -113,7 +112,7 @@ final class DesignPatternCoreDataDataSourceTests: XCTestCase {
     
     func test_updatePattern_withUnknownId_throwsNotFound() {
         do {
-            mockCoreData.fetchOneResult = nil
+            mockCoreData.fetchResult = [ ]
             let newPattern = DesignPattern(name: "New Test", type: .behavioral, patternDescription: "B")
             try dataSource.updatePattern(UUID(), pattern: newPattern)
             XCTFail("Expected error but got success")

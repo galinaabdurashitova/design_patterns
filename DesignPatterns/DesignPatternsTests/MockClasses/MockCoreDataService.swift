@@ -14,7 +14,6 @@ final class MockCoreDataService: CoreDataServiceProtocol {
     var didCallSave = false
 
     var fetchResult: [NSManagedObject] = []
-    var fetchOneResult: NSManagedObject?
 
     init() {
         let container = NSPersistentContainer(name: "DesignPatterns")
@@ -38,7 +37,7 @@ final class MockCoreDataService: CoreDataServiceProtocol {
 
     func fetchOne<T: NSManagedObject>(_ request: NSFetchRequest<T>) throws -> T? {
         if throwError { throw TestError.sample }
-        return fetchOneResult as? T
+        return fetchResult.first(where: { $0 is T }) as? T
     }
 
     func saveIfNeeded() throws {

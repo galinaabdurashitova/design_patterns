@@ -16,11 +16,7 @@ class CodeExampleCoreDataDataSource: CodeExampleDataSourceProtocol {
     }
     
     func getCodeExample(_ id: UUID) throws -> CodeExample {
-        let request = CodeExampleEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        guard let entity = try coreData.fetchOne(request) else {
-            throw DataSourceError.notFound
-        }
+        let entity = try fetchCodeExampleEntity(with: id)
         return try CodeExampleMapper.from(entity: entity)
     }
     
@@ -33,12 +29,7 @@ class CodeExampleCoreDataDataSource: CodeExampleDataSourceProtocol {
     }
     
     func addCodeExample(_ codeExample: CodeExample) throws {
-        let request = DesignPatternEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", codeExample.patternId as CVarArg)
-        guard let patternEntity = try coreData.fetchOne(request) else {
-            throw CodeExampleError.missingPattern
-        }
-        
+        let patternEntity = try fetchDesignPatternEntity(with: codeExample.patternId)
         _ = CodeExampleMapper.toEntity(
             from: codeExample,
             designPattern: patternEntity,
@@ -47,23 +38,34 @@ class CodeExampleCoreDataDataSource: CodeExampleDataSourceProtocol {
         try coreData.saveIfNeeded()
     }
     
-    func updateCodeExample(_ id: UUID, codeExample: CodeExample) async throws {
-        let request = CodeExampleEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        guard let entity = try coreData.fetchOne(request) else {
-            throw DataSourceError.notFound
-        }
-
-        let patternRequest = DesignPatternEntity.fetchRequest()
-        patternRequest.predicate = NSPredicate(format: "id == %@", codeExample.patternId as CVarArg)
-        guard let patternEntity = try coreData.fetchOne(patternRequest) else {
-            throw CodeExampleError.missingPattern
-        }
+    func updateCodeExample(_ id: UUID, codeExample: CodeExample) throws {
+        let entity = try fetchCodeExampleEntity(with: id)
+        let patternEntity = try fetchDesignPatternEntity(with: codeExample.patternId)
 
         entity.id = codeExample.id
         entity.code = codeExample.code
         entity.designPatternRelationship = patternEntity
 
         try coreData.saveIfNeeded()
+    }
+    
+    // MARK: - Private functions
+    
+    private func fetchCodeExampleEntity(with id: UUID) throws -> CodeExampleEntity {
+        let request = CodeExampleEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        guard let entity = try coreData.fetchOne(request) else {
+            throw DataSourceError.notFound
+        }
+        return entity
+    }
+    
+    private func fetchDesignPatternEntity(with id: UUID) throws -> DesignPatternEntity {
+        let patternRequest = DesignPatternEntity.fetchRequest()
+        patternRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        guard let patternEntity = try coreData.fetchOne(patternRequest) else {
+            throw CodeExampleError.missingPattern
+        }
+        return patternEntity
     }
 }
