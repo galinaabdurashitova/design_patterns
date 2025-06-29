@@ -78,9 +78,12 @@ final class DesignPatternsUITests: XCTestCase {
         let filterButton = app.buttons["filterButton"]
         filterButton.tap()
         
+        let doneButton = app.buttons["patternFilterDoneButton"]
+        XCTAssertTrue(doneButton.waitForExistence(timeout: 2))
+        
         app.buttons["patternType-creational"].tap()
         app.buttons["patternType-structural"].tap()
-        app.buttons["patternFilterDoneButton"].tap()
+        doneButton.tap()
         
         let list = app.collectionViews["PatternsList"]
         let firstCell = list.cells.element(boundBy: list.cells.count-1)
