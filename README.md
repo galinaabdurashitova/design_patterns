@@ -1,4 +1,6 @@
-# DesignPatterns App (SwiftUI + Clean Architecture) - currently WIP
+# DesignPatterns App (SwiftUI + Clean Architecture) — currently WIP
+
+[![CI](https://github.com/galina-a/design_patterns/actions/workflows/ios-ci.yml/badge.svg?branch=main)](https://github.com/galina-a/design_patterns/actions/workflows/ios-ci.yml)
 
 This is a demo iOS application built with **SwiftUI** that demonstrates the **real-world use of software design patterns** in a clean, modular architecture.
 
@@ -38,7 +40,7 @@ You can find all patterns in action inside:
 
 ---
 
-## 🧪 Preview of UI
+## 🧪 UI Preview
 
 <p align="center">
   <img src="screenshots/1_main_screen.png" width="160"/>
@@ -50,6 +52,34 @@ You can find all patterns in action inside:
 
 ---
 
+## 🧪 Tests
+
+This project includes full **automated testing** for all layers:
+
+| Test Type      | Target                     | Description                                         |
+|----------------|----------------------------|-----------------------------------------------------|
+| ✅ Unit         | `DesignPatternsTests`       | Tests for use cases, specifications, and utilities  |
+| ✅ Snapshot     | `DesignPatternsSnapshotTests` | UI snapshot testing for SwiftUI views               |
+| ✅ UI           | `DesignPatternsUITests`     | End-to-end UI tests using accessibility identifiers |
+
+All tests are integrated with CI and verified automatically on each push to `main`.
+
+---
+
+## 🚀 CI/CD
+
+Basic **GitHub Actions** setup is included and runs on each push to `main`. The pipeline:
+
+1. Builds the app and resolves all SwiftPM dependencies
+2. Runs:
+   - Unit tests
+   - Snapshot tests
+   - UI tests (with full simulator launch and verification)
+
+> CI runs on `macos-15` using Xcode 16.4 and iPhone 16 Pro simulator
+
+---
+
 ## 🛠 Technologies Used
 
 - Swift 5.10
@@ -58,4 +88,6 @@ You can find all patterns in action inside:
 - Combine (for state observation and filtering)
 - Swift Concurrency (`async/await`)
 - Dependency Inversion & Protocol-Oriented Design
-
+- SnapshotTesting (by Point-Free)
+- XCTest for all test layers
+- GitHub Actions (CI)
