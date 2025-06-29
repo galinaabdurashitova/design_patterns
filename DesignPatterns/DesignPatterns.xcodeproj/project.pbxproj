@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2AD0B3102E09D66F009A93A3 /* DesignPatterns.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2AD0B30E2E09D66F009A93A3 /* DesignPatterns.xcdatamodeld */; };
+		2AD0CFDA2E117CE7009A93A3 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2AD0CFD92E117CE7009A93A3 /* SnapshotTesting */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AD0CFDA2E117CE7009A93A3 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,6 +156,7 @@
 			);
 			name = DesignPatternsTests;
 			packageProductDependencies = (
+				2AD0CFD92E117CE7009A93A3 /* SnapshotTesting */,
 			);
 			productName = DesignPatternsTests;
 			productReference = 2A08E5F32DCD4561008E90A2 /* DesignPatternsTests.xctest */;
@@ -214,6 +217,9 @@
 			);
 			mainGroup = 2A08E5DD2DCD455E008E90A2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2AD0CFD82E117CE7009A93A3 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2A08E5E72DCD455E008E90A2 /* Products */;
 			projectDirPath = "";
@@ -584,6 +590,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2AD0CFD82E117CE7009A93A3 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.18.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2AD0CFD92E117CE7009A93A3 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2AD0CFD82E117CE7009A93A3 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		2AD0B30E2E09D66F009A93A3 /* DesignPatterns.xcdatamodeld */ = {
