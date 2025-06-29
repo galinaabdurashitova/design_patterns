@@ -76,22 +76,32 @@ final class DesignPatternsUITests: XCTestCase {
     
     func test_typeFilterSheet_filtersPatterns() {
         let filterButton = app.buttons["filterButton"]
+        XCTAssertTrue(filterButton.waitForExistence(timeout: 3))
         filterButton.tap()
         
+        let creational = app.buttons["patternType-creational"]
+        let structural = app.buttons["patternType-structural"]
         let doneButton = app.buttons["patternFilterDoneButton"]
+
+        XCTAssertTrue(creational.waitForExistence(timeout: 2))
+        XCTAssertTrue(structural.waitForExistence(timeout: 2))
         XCTAssertTrue(doneButton.waitForExistence(timeout: 2))
         
-        app.buttons["patternType-creational"].tap()
-        app.buttons["patternType-structural"].tap()
-        doneButton.tap()
+        creational.tap()
+        structural.tap()
         
+        XCTAssertTrue(doneButton.isHittable, "Done button is not tappable")
+        doneButton.tap()
+
         let list = app.collectionViews["PatternsList"]
-        let firstCell = list.cells.element(boundBy: list.cells.count-1)
-        XCTAssertTrue(firstCell.waitForNonExistence(timeout: 2))
+        
+        let expectedCell = list.cells.element(boundBy: 1)
+        XCTAssertTrue(expectedCell.waitForExistence(timeout: 3), "Filtered cell did not appear in time")
         
         XCTAssertEqual(list.cells.count, 2)
         XCTAssertEqual(filterButton.label, "2 types")
     }
+
     
     func test_typeFilterSheet_closeSheet() {
         app.buttons["filterButton"].tap()
