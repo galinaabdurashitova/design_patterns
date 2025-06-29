@@ -1,0 +1,43 @@
+name: DesignPatterns iOS CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test-upload:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - name: Resolve SPM dependencies
+        run: xcodebuild -resolvePackageDependencies -project DesignPatterns/DesignPatterns.xcodeproj -scheme DesignPatterns
+        
+      - name: Run Unit Tests
+        run: |
+          xcodebuild test \
+            -project DesignPatterns/DesignPatterns.xcodeproj \
+            -scheme DesignPatterns \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            -only-testing:DesignPatternsTests
+
+      - name: Run Snapshot Tests
+        run: |
+          xcodebuild test \
+            -project DesignPatterns/DesignPatterns.xcodeproj \
+            -scheme DesignPatterns \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            -only-testing:DesignPatternsSnapshotTests
+
+      - name: Run UI tests
+        run: |
+          xcodebuild test \
+            -project DesignPatterns/DesignPatterns.xcodeproj \
+            -scheme DesignPatterns \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            -only-testing:DesignPatternsUITests
