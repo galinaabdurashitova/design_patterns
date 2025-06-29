@@ -11,21 +11,37 @@ struct DesignPatternsListView<ViewModel: DesignPatternsListViewModelProtocol>: V
     // MARK: - Properties
     @StateObject var viewModel: ViewModel
     
+    @State private var isNewPatternSheetPresented = false
+    
     // MARK: - View
     var body: some View {
-        VStack(spacing: 12) {
-            screenHeader
-            
-            searchLine
-                .padding(.horizontal)
+        ZStack(alignment: .bottomTrailing) {
+            VStack(spacing: 12) {
+                screenHeader
                 
-            listContentView
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                searchLine
+                    .padding(.horizontal)
+                
+                listContentView
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            
+            addNewPatternButton
+                .padding()
         }
         .blur(radius: viewModel.isTypeFilterSheetPresented ? 5 : 0)
         .background { BackgroundGradient() }
         .onAppear(perform: loadScreenData)
         .patternViewOverlay($viewModel.selectedPattern)
+        .fullScreenCover(
+            isPresented: $isNewPatternSheetPresented,
+            onDismiss: viewModel.fetchDesignPatterns
+        ) {
+            NewPatternView(
+                viewModel: ViewModelFactory.makeNewPatternViewModel(),
+                isPresented: $isNewPatternSheetPresented
+            )
+        }
     }
     
     // MARK: - Sub Views
@@ -147,6 +163,18 @@ struct DesignPatternsListView<ViewModel: DesignPatternsListViewModelProtocol>: V
                     Capsule().fill(Color.white.opacity(0.8))
                 )
             }
+        }
+    }
+    
+    private var addNewPatternButton: some View {
+        Button(action: { isNewPatternSheetPresented = true }) {
+            Image(systemName: "plus")
+                .font(.system(size: 24, weight: .bold))
+                .foregroundColor(.white)
+                .padding(20)
+                .background(
+                    Circle().fill(.greenAccent)
+                )
         }
     }
     

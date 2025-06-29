@@ -7,7 +7,7 @@
 
 @testable import DesignPatterns
 
-class MockDesignPatternUseCase: DesignPatternUseCaseProtocol {
+class MockFetchDesignPatternsUseCase: FetchDesignPatternsUseCaseProtocol {
     var patterns = MockDesignPatterns.patterns
     var throwError: Bool = false
     

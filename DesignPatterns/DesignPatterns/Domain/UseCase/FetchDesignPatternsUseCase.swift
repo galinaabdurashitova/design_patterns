@@ -7,24 +7,20 @@
 
 import Foundation
 
-protocol DesignPatternUseCaseProtocol {
+protocol FetchDesignPatternsUseCaseProtocol {
     func getPatterns() async throws -> [DesignPattern]
     func getPatternsFiltered(byName: String, byTypes: [DesignPatternType]) async throws -> [DesignPattern]
-    func addPattern(name: String, type: DesignPatternType, description: String, codeExamples: [String]) async throws
 }
 
-class DesignPatternUseCase<Filter: FilterProtocol>: DesignPatternUseCaseProtocol where Filter.T == DesignPattern {
+class FetchDesignPatternsUseCase<Filter: FilterProtocol>: FetchDesignPatternsUseCaseProtocol where Filter.T == DesignPattern {
     private let designPatternRepository: DesignPatternRepositoryProtocol
-    private let codeExampleRepository: CodeExampleRepositoryProtocol
     private let filter: Filter
     
     init(
         repository: DesignPatternRepositoryProtocol,
-        codeExampleRepository: CodeExampleRepositoryProtocol,
         filter: Filter = DesignPatternFilter()
     ) {
         self.designPatternRepository = repository
-        self.codeExampleRepository = codeExampleRepository
         self.filter = filter
     }
     
@@ -47,20 +43,6 @@ class DesignPatternUseCase<Filter: FilterProtocol>: DesignPatternUseCaseProtocol
             
         } else {
             return patterns
-        }
-    }
-    
-    func addPattern(name: String, type: DesignPatternType, description: String, codeExamples: [String]) async throws {
-        let newPattern = try DesignPattern.builder()
-            .setName(name)
-            .setType(type)
-            .setDescription(description)
-            .build()
-        
-        try await designPatternRepository.addPattern(newPattern)
-        
-        for example in codeExamples {
-            try? await codeExampleRepository.addCodeExample(example, for: newPattern.id)
         }
     }
 }

@@ -10,12 +10,12 @@ import XCTest
 
 @MainActor
 final class DesignPatternsListViewModelTests: XCTestCase {
-    private var mockUseCase: MockDesignPatternUseCase!
+    private var mockUseCase: MockFetchDesignPatternsUseCase!
     private var viewModel: DesignPatternsListViewModel!
 
     override func setUp() {
         super.setUp()
-        mockUseCase = MockDesignPatternUseCase()
+        mockUseCase = MockFetchDesignPatternsUseCase()
         viewModel = DesignPatternsListViewModel(useCase: mockUseCase)
     }
     

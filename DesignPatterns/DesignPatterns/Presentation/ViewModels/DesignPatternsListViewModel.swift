@@ -27,12 +27,12 @@ class DesignPatternsListViewModel: DesignPatternsListViewModelProtocol, Observab
     
     @Published var isTypeFilterSheetPresented: Bool = false
     
-    private let useCase: DesignPatternUseCaseProtocol
+    private let useCase: FetchDesignPatternsUseCaseProtocol
     
     private var cancellables = Set<AnyCancellable>()
     private let debounceIntervalMs: Int = 600
     
-    init(useCase: DesignPatternUseCaseProtocol) {
+    init(useCase: FetchDesignPatternsUseCaseProtocol) {
         self.useCase = useCase
         bindSearch()
     }

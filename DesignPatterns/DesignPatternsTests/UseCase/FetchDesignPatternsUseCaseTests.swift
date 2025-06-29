@@ -8,20 +8,17 @@
 import XCTest
 @testable import DesignPatterns
 
-final class DesignPatternUseCaseTests: XCTestCase {
-    private var mockCodeExampleRepository: MockCodeExampleRepository!
+final class FetchDesignPatternsUseCaseTests: XCTestCase {
     private var mockDesignPatternRepository: MockDesignPatternRepository!
     private var mockFilter: MockFilter!
-    private var useCase: DesignPatternUseCase<MockFilter>!
+    private var useCase: FetchDesignPatternsUseCase<MockFilter>!
 
     override func setUp() {
         super.setUp()
-        mockCodeExampleRepository = MockCodeExampleRepository()
         mockDesignPatternRepository = MockDesignPatternRepository()
         mockFilter = MockFilter()
-        useCase = DesignPatternUseCase(
+        useCase = FetchDesignPatternsUseCase(
             repository: mockDesignPatternRepository,
-            codeExampleRepository: mockCodeExampleRepository,
             filter: mockFilter
         )
     }
@@ -78,40 +75,6 @@ final class DesignPatternUseCaseTests: XCTestCase {
         mockDesignPatternRepository.throwError = true
         do {
             _ = try await useCase.getPatternsFiltered(byName: "", byTypes: [])
-            XCTFail("Expected error but got success")
-        } catch {
-            XCTAssertTrue(error is TestError)
-        }
-    }
-    
-    func test_addPattern_success() async throws {
-        try await useCase.addPattern(name: "Test", type: .behavioral, description: "A", codeExamples: ["// Code example"])
-        let newPatterns = try await useCase.getPatterns()
-        XCTAssertEqual(newPatterns.count, TestDesignPatterns.patterns.count+1)
-        
-        let newPattern = newPatterns[newPatterns.count-1]
-        XCTAssertEqual(newPattern.name, "Test")
-        XCTAssertEqual(newPattern.type, .behavioral)
-        XCTAssertEqual(newPattern.patternDescription, "A")
-        
-        XCTAssertEqual(mockCodeExampleRepository.examples.count, 1)
-        XCTAssertEqual(mockCodeExampleRepository.examples[0].code, "// Code example")
-        XCTAssertEqual(mockCodeExampleRepository.examples[0].patternId, newPattern.id)
-    }
-    
-    func test_addPattern_withBuilderError() async {
-        do {
-            try await useCase.addPattern(name: "", type: .behavioral, description: "", codeExamples: [])
-            XCTFail("Expected error but got success")
-        } catch {
-            XCTAssertTrue(error is DesignPatternError)
-        }
-    }
-    
-    func test_addPattern_withRepositoryError() async {
-        mockDesignPatternRepository.throwError = true
-        do {
-            try await useCase.addPattern(name: "Test", type: .behavioral, description: "", codeExamples: [])
             XCTFail("Expected error but got success")
         } catch {
             XCTAssertTrue(error is TestError)
