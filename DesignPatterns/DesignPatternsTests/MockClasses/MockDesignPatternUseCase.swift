@@ -5,7 +5,6 @@
 //  Created by Galina Abdurashitova on 29.06.2025.
 //
 
-
 @testable import DesignPatterns
 
 class MockDesignPatternUseCase: DesignPatternUseCaseProtocol {

@@ -1,6 +1,6 @@
 //
 //  DesignPatternsSnapshotTests.swift
-//  DesignPatternsTests
+//  DesignPatternsSnapshotTests
 //
 //  Created by Galina Abdurashitova on 29.06.2025.
 //
@@ -16,10 +16,7 @@ final class DesignPatternsSnapshotTests: XCTestCase {
     @MainActor
     func test_mainScreen_snapshot() {
         let view = DesignPatternsListView(
-            viewModel: DesignPatternsListViewModel(
-                patterns: TestDesignPatterns.patterns,
-                useCase: MockDesignPatternUseCase()
-            )
+            viewModel: MockDesignPatternsListViewModel()
         )
         let vc = UIHostingController(rootView: view)
 
@@ -57,3 +54,4 @@ final class DesignPatternsSnapshotTests: XCTestCase {
         )
     }
 }
+

@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct DesignPatternsListView: View {
+struct DesignPatternsListView<ViewModel: DesignPatternsListViewModelProtocol>: View {
     // MARK: - Properties
-    @StateObject var viewModel: DesignPatternsListViewModel
+    @StateObject var viewModel: ViewModel
     
     // MARK: - View
     var body: some View {

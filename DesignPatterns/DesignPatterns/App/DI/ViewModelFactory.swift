@@ -8,12 +8,12 @@
 import Foundation
 
 final class ViewModelFactory {
-    @MainActor static func makeDesignPatternsListViewModel(dataSource: AvailableDataSource = .coreData) -> DesignPatternsListViewModel {
+    @MainActor static func makeDesignPatternsListViewModel() -> DesignPatternsListViewModel {
         let args = ProcessInfo.processInfo.arguments
         let isUITest = args.contains("--UITests")
         let dataSource: AvailableDataSource = isUITest
             ? .mocks
-            : dataSource
+            : .coreData
         
         let patternRepo = DesignPatternRepository(dataSource: dataSource.makeDesignPatternDataSource())
         let codeExampleRepo = CodeExampleRepository(dataSource: dataSource.makeCodeExampleDataSource())

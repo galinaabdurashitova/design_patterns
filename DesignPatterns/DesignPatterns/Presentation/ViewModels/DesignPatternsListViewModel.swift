@@ -8,8 +8,17 @@
 import Foundation
 import Combine
 
+protocol DesignPatternsListViewModelProtocol: ObservableObject {
+    @MainActor var designPatternsState: UIState<[DesignPattern]> { get set }
+    @MainActor var selectedPattern: DesignPattern?  { get set }
+    @MainActor var searchText: String { get set }
+    @MainActor var selectedTypes: [DesignPatternType] { get set }
+    @MainActor var isTypeFilterSheetPresented: Bool { get set }
+    @MainActor func fetchDesignPatterns()
+}
+
 @MainActor
-class DesignPatternsListViewModel: ObservableObject {
+class DesignPatternsListViewModel: DesignPatternsListViewModelProtocol, ObservableObject {
     @Published var designPatternsState: UIState<[DesignPattern]> = .idle
     @Published var selectedPattern: DesignPattern?
     
@@ -23,10 +32,7 @@ class DesignPatternsListViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let debounceIntervalMs: Int = 600
     
-    init(patterns: [DesignPattern]? = nil, useCase: DesignPatternUseCaseProtocol) {
-        if let patterns = patterns {
-            designPatternsState = .success(patterns)
-        }
+    init(useCase: DesignPatternUseCaseProtocol) {
         self.useCase = useCase
         bindSearch()
     }
