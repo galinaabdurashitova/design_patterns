@@ -62,7 +62,7 @@ final class AddDesignPatternUseCaseTests: XCTestCase {
         XCTAssertTrue(result1)
         
         let result2 = try await useCase.checkPatternNameUsed("aaa")
-        XCTAssertTrue(result2)
+        XCTAssertFalse(result2)
     }
     
     func test_checkPatternNameUsed_withRepositoryError() async throws {
