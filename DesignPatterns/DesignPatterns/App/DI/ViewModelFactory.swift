@@ -9,7 +9,11 @@ import Foundation
 
 final class ViewModelFactory {
     @MainActor static func makeDesignPatternsListViewModel() -> DesignPatternsListViewModel {
-        let dataSource = AvailableDataSource.coreData
+        let args = ProcessInfo.processInfo.arguments
+        let isUITest = args.contains("--UITests")
+        let dataSource: AvailableDataSource = isUITest
+            ? .mocks
+            : .coreData
         
         let patternRepo = DesignPatternRepository(dataSource: dataSource.makeDesignPatternDataSource())
         let codeExampleRepo = CodeExampleRepository(dataSource: dataSource.makeCodeExampleDataSource())

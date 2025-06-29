@@ -57,6 +57,7 @@ struct TypeFilterView: View {
             RoundedRectangle(cornerRadius: 20)
                 .fill(type.backgroundColor.opacity(0.6))
         )
+        .accessibilityIdentifier("patternType-\(type.rawValue)")
     }
     
     private func patternTypeCheckmarkView(type: DesignPatternType) -> some View {
@@ -88,6 +89,7 @@ struct TypeFilterView: View {
                         .fill(Color.white.opacity(0.8))
                 )
         }
+        .accessibilityIdentifier("patternFilterDoneButton")
     }
     
     private func selectPatternType(_ type: DesignPatternType) {

@@ -17,6 +17,7 @@ struct SearchTextField: View {
                 .opacity(0.6)
             
             TextField(searchHint, text: $searchText)
+                .accessibilityIdentifier("searchTextField")
             
             if !searchText.isEmpty {
                 Button(action: {
@@ -25,6 +26,7 @@ struct SearchTextField: View {
                     Image(systemName: "xmark")
                         .foregroundColor(.black.opacity(0.6))
                 }
+                .accessibilityIdentifier("searchClearButton")
             }
         }
         .filterFieldStyle(cornerRadius: 12)

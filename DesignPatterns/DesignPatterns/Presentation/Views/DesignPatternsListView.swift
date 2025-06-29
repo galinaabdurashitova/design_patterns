@@ -55,15 +55,16 @@ struct DesignPatternsListView: View {
     }
     
     private func listView(patterns: [DesignPattern]) -> some View {
-        ScrollView {
-            LazyVStack(spacing:8) {
-                ForEach(Array(patterns.enumerated()), id: \.offset) { index, pattern in
-                    patternLine(index: index, pattern: pattern)
-                        .accessibilityIdentifier("patternRow_\(index)")
-                }
-            }
-            .padding(.horizontal)
+        List(Array(patterns.enumerated()), id: \.offset) { index, pattern in
+            patternLine(index: index, pattern: pattern)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                .accessibilityIdentifier("patternRow-\(pattern.name)")
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .accessibilityIdentifier("PatternsList")
     }
     
     // MARK: Search
@@ -111,6 +112,7 @@ struct DesignPatternsListView: View {
             isPresented: $viewModel.isTypeFilterSheetPresented,
             selectedTypes: $viewModel.selectedTypes
         )
+        .accessibilityIdentifier("filterButton")
     }
     
     // MARK: Pattern line

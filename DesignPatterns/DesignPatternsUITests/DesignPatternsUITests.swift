@@ -8,34 +8,102 @@
 import XCTest
 
 final class DesignPatternsUITests: XCTestCase {
-
+    var app: XCUIApplication!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+        app = XCUIApplication()
+        app.launchArguments.append("--UITests")
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
-
-    @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    
+    func test_mainScreenContent_showsPatternsContent() {
+        let list = app.collectionViews["PatternsList"]
+        XCTAssertEqual(list.cells.count, 3)
+    }
+    
+    func test_mainScreenContent_filtersAreClearedOnLaunch() {
+        let textField = app.textFields["searchTextField"]
+        XCTAssertEqual(textField.placeholderValue, "Search patterns")
+        
+        let clearButton = app.buttons["searchClearButton"]
+        XCTAssertFalse(clearButton.exists)
+        
+        let typeButton = app.buttons["filterButton"]
+        XCTAssertEqual(typeButton.label, "Type")
+    }
+    
+    func test_designPatternView_showsPatternDetailsAndCloses() {
+        app.buttons["patternRow-Builder"].tap()
+        
+        let designPatternView = app.staticTexts["patternView-Builder"]
+        XCTAssertTrue(designPatternView.exists)
+        
+        let list = app.collectionViews["PatternsList"]
+        XCTAssertFalse(list.isEnabled)
+        
+        app.buttons["patternViewCloseButton"].tap()
+        
+        XCTAssertTrue(designPatternView.waitForNonExistence(timeout: 1))
+    }
+    
+    func test_searchBar_searchesPatterns() {
+        let textField = app.textFields["searchTextField"]
+        textField.tap()
+        textField.typeText("Buil")
+        
+        let list = app.collectionViews["PatternsList"]
+        
+        let firstCell = list.cells.element(boundBy: list.cells.count-1)
+        XCTAssertTrue(firstCell.waitForNonExistence(timeout: 2))
+        
+        XCTAssertEqual(list.cells.count, 1)
+    }
+    
+    func test_searchBar_clearsSearch() {
+        let textField = app.textFields["searchTextField"]
+        textField.tap()
+        textField.typeText("Buil")
+        
+        let clearButton = app.buttons["searchClearButton"]
+        XCTAssertTrue(clearButton.exists)
+        
+        clearButton.tap()
+        XCTAssertFalse(clearButton.exists)
+        
+        XCTAssertEqual(textField.placeholderValue, "Search patterns")
+    }
+    
+    func test_typeFilterSheet_filtersPatterns() {
+        let filterButton = app.buttons["filterButton"]
+        filterButton.tap()
+        
+        app.buttons["patternType-creational"].tap()
+        app.buttons["patternType-structural"].tap()
+        app.buttons["patternFilterDoneButton"].tap()
+        
+        let list = app.collectionViews["PatternsList"]
+        let firstCell = list.cells.element(boundBy: list.cells.count-1)
+        XCTAssertTrue(firstCell.waitForNonExistence(timeout: 2))
+        
+        XCTAssertEqual(list.cells.count, 2)
+        XCTAssertEqual(filterButton.label, "2 types")
+    }
+    
+    func test_typeFilterSheet_closeSheet() {
+        app.buttons["filterButton"].tap()
+        
+        let sheetBackground = app.otherElements["PopoverDismissRegion"]
+        XCTAssertTrue(sheetBackground.waitForExistence(timeout: 1))
+        
+        let coordinate = app.coordinate(
+            withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)
+        )
+        coordinate.tap()
+        
+        XCTAssertTrue(sheetBackground.waitForNonExistence(timeout: 1))
+        
+        let list = app.collectionViews["PatternsList"]
+        XCTAssertEqual(list.cells.count, 3)
     }
 }

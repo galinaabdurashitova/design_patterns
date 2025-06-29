@@ -32,6 +32,7 @@ struct DesignPatternView: View {
                 .font(.system(size: 24, weight: .bold, design: .rounded))
             Text(selectedPattern.type.emojiIcon)
         }
+        .accessibilityIdentifier("patternView-\(selectedPattern.name)")
     }
     
     private var patternDescriptionText: some View {
@@ -50,6 +51,7 @@ struct DesignPatternView: View {
                     Circle().fill(Color.white.opacity(0.8))
                 )
         }
+        .accessibilityIdentifier("patternViewCloseButton")
     }
     
     private func overlayContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
