@@ -20,14 +20,14 @@ jobs:
           xcodebuild build-for-testing \
             -project DesignPatterns/DesignPatterns.xcodeproj \
             -scheme DesignPatterns \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=17.5'
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
 
       - name: Run Unit Tests
         run: |
           xcodebuild test-without-building \
             -project DesignPatterns/DesignPatterns.xcodeproj \
             -scheme DesignPatterns \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=17.5' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
             -only-testing:DesignPatternsTests
 
       - name: Run Snapshot Tests
@@ -35,7 +35,7 @@ jobs:
           xcodebuild test-without-building \
             -project DesignPatterns/DesignPatterns.xcodeproj \
             -scheme DesignPatterns \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=17.5' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
             -only-testing:DesignPatternsSnapshotTests
 
       - name: Run UI Tests
@@ -43,5 +43,5 @@ jobs:
           xcodebuild test-without-building \
             -project DesignPatterns/DesignPatterns.xcodeproj \
             -scheme DesignPatterns \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=17.5' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
             -only-testing:DesignPatternsUITests
