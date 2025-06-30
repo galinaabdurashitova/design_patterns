@@ -9,9 +9,10 @@ import Foundation
 import Combine
 
 class NewPatternViewModel: ObservableObject {
-    @Published var creationStep: DesignPatternCreationStep = .name
+    @Published var creationStep: DesignPatternCreationStep = .type
     @Published var name: String = ""
     @Published var nameCheckState: UIState<Bool> = .idle
+    @Published var selectedType: DesignPatternType?
     
     private let useCase: AddDesignPatternUseCaseProtocol
     

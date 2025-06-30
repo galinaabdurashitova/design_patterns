@@ -11,8 +11,15 @@ struct NewPatternView: View {
     @StateObject var viewModel: NewPatternViewModel
     @Binding var isPresented: Bool
     
+    private var currentStep: Int {
+        DesignPatternCreationStep
+            .allCases
+            .firstIndex(of: viewModel.creationStep)
+        ?? 0
+    }
+    
     private var progressWidth: Double {
-        Double(DesignPatternCreationStep.allCases.firstIndex(of: viewModel.creationStep) ?? 0)
+        Double(currentStep)
         / Double(DesignPatternCreationStep.allCases.count - 1)
     }
     
@@ -36,12 +43,18 @@ struct NewPatternView: View {
     
     // MARK: - Subviews
     private var topBar: some View {
-        Button(action: { isPresented = false }) {
-            Image(systemName: "xmark")
-                .foregroundColor(.primary)
+        ZStack(alignment: .leading) {
+            Button(action: { isPresented = false }) {
+                Image(systemName: "xmark")
+                    .foregroundColor(.primary)
+            }
+            
+            Text("Add new design pattern \(currentStep+1)/\(DesignPatternCreationStep.allCases.count)")
+                .fontWidth(.expanded)
+                .frame(maxWidth: .infinity)
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
+        .padding(.top)
     }
     
     private var progressSeparatorBar: some View {
@@ -64,7 +77,7 @@ struct NewPatternView: View {
         case .name:
             nameInputView
         case .type:
-            EmptyView()
+            typeChooseStep
         case .description:
             EmptyView()
         case .codeExamples:
@@ -107,6 +120,68 @@ struct NewPatternView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(.systemGray), lineWidth: 1)
                 )
+                
+                if case .error(let error) = viewModel.nameCheckState {
+                    Text("Couldn't check the name: \(error.localizedDescription)")
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                }
+            }
+            
+            buttonView
+        }
+    }
+    
+    private var typeChooseStep: some View {
+        VStack(spacing: 60) {
+            VStack(spacing: 12) {
+                Text("Select a type for the new pattern")
+                    .fontWeight(.bold)
+                    .fontDesign(.rounded)
+                
+                ForEach(DesignPatternType.allCases, id: \.self) { type in
+                    Button(action: {
+                        viewModel.selectedType = type
+                    }) {
+                        HStack {
+                            Text(type.name)
+                                .foregroundColor(.primary)
+                                .fontDesign(.monospaced)
+                                .fontWeight(viewModel.selectedType == type ? .heavy : .regular)
+                            
+                            Spacer()
+                            
+                            LottieView(
+                                animationFileName: "\(type.rawValue)_lottie",
+                                loopMode: .loop,
+                                isPlaying: Binding<Bool>(
+                                    get: { viewModel.selectedType == type },
+                                    set: { _ in }
+                                )
+                            )
+                            .scaledToFit()
+                            .frame(height: 80)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(
+                                    viewModel.selectedType == type
+                                    ? type.backgroundColor
+                                    : Color(.systemGray6)
+                                )
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(
+                                    viewModel.selectedType == type
+                                    ? type.color
+                                    : Color(.systemGray4),
+                                    lineWidth: viewModel.selectedType == type ? 4 : 2
+                                )
+                        )
+                    }
+                }
             }
             
             buttonView
