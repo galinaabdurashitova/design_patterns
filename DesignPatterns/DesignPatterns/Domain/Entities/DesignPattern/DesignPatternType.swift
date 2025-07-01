@@ -22,6 +22,17 @@ enum DesignPatternType: String, CaseIterable {
             "Behavioral"
         }
     }
+    
+    var description: String {
+        switch self {
+        case .creational:
+            "Patterns for making objects without hardcoding the process."
+        case .structural:
+            "Patterns for organising relationships between objects."
+        case .behavioral:
+            "Patterns for how objects communicate and work together."
+        }
+    }
 }
 
 

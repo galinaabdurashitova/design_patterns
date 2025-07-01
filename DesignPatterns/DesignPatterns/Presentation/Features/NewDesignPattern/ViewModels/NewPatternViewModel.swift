@@ -8,25 +8,22 @@
 import Foundation
 import Combine
 
+@MainActor
 class NewPatternViewModel: ObservableObject {
-    @Published var creationStep: DesignPatternCreationStep = .type
+    @Published var creationStep: DesignPatternCreationStep = .name
+    @Published var patternBuilder: DesignPattern.Builder = .init()
+    
     @Published var name: String = ""
     @Published var nameCheckState: UIState<Bool> = .idle
+    
     @Published var selectedType: DesignPatternType?
+    
+    @Published var description: String = ""
     
     private let useCase: AddDesignPatternUseCaseProtocol
     
     private var cancellables = Set<AnyCancellable>()
     private let debounceIntervalMs: Int = 600
-    
-    var continueButtonDisabled: Bool {
-        switch nameCheckState {
-        case .success(let result):
-            result || name.isEmpty
-        default:
-            true
-        }
-    }
     
     init(useCase: AddDesignPatternUseCaseProtocol) {
         self.useCase = useCase
@@ -34,6 +31,19 @@ class NewPatternViewModel: ObservableObject {
     }
     
     func nextStep() {
+        switch creationStep {
+        case .name:
+            patternBuilder = patternBuilder.setName(name)
+        case .type:
+            guard let selectedType else { return }
+            patternBuilder = patternBuilder.setType(selectedType)
+        case .description:
+            break
+        case .codeExamples:
+            break
+        case .confirm:
+            break
+        }
         creationStep = creationStep.next
     }
     

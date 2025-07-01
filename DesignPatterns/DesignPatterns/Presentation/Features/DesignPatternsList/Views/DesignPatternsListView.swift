@@ -91,44 +91,12 @@ struct DesignPatternsListView<ViewModel: DesignPatternsListViewModelProtocol>: V
                 searchHint: "Search patterns"
             )
             
-            typeFilterButton
-        }
-    }
-    
-    private var typeFilterButton: some View {
-        Button(action: {
-            viewModel.isTypeFilterSheetPresented = true
-        }) {
-            HStack(spacing: 4) {
-                Image(systemName: "line.3.horizontal.decrease")
-                    .fontWeight(viewModel.selectedTypes.isEmpty ? .light : .medium)
-                
-                switch viewModel.selectedTypes.count {
-                case 0:
-                    Text("Type")
-                        .fontWeight(.light)
-                        .opacity(0.4)
-                case 1:
-                    Text(viewModel.selectedTypes[0].name)
-                        .fontWeight(.medium)
-                        .fontWidth(.condensed)
-                default:
-                    Text("\(viewModel.selectedTypes.count) types")
-                        .fontWeight(.medium)
-                        .fontWidth(.condensed)
-                }
-            }
-            .foregroundColor(.black)
-            .filterFieldStyle(
-                cornerRadius: 36,
-                lineWidth: viewModel.selectedTypes.isEmpty ? 0.5 : 2
+            TypeFilterButton(
+                isTypeFilterSheetPresented: $viewModel.isTypeFilterSheetPresented,
+                selectedTypes: $viewModel.selectedTypes
             )
+            .accessibilityIdentifier("filterButton")
         }
-        .typeFilterSheet(
-            isPresented: $viewModel.isTypeFilterSheetPresented,
-            selectedTypes: $viewModel.selectedTypes
-        )
-        .accessibilityIdentifier("filterButton")
     }
     
     // MARK: Pattern line
@@ -140,28 +108,7 @@ struct DesignPatternsListView<ViewModel: DesignPatternsListViewModelProtocol>: V
             Button(action: {
                 viewModel.selectedPattern = pattern
             }) {
-                HStack(spacing: 12) {
-                    Text(pattern.type.emojiIcon)
-                        .padding(8)
-                        .background(
-                            Circle()
-                                .fill(pattern.type.color)
-                        )
-                    
-                    Text(pattern.name)
-                        .font(.system(size: 18, weight: .light, design: .rounded))
-                        .foregroundColor(.black)
-                        .kerning(-0.4)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.black)
-                }
-                .padding(8)
-                .background(
-                    Capsule().fill(Color.white.opacity(0.8))
-                )
+                pattern.patternLineView()
             }
         }
     }
