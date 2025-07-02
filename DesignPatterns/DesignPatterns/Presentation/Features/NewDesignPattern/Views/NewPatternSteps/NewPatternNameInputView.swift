@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NewPatternNameInputView: View {
     @ObservedObject var viewModel: NewPatternViewModel
+    @FocusState var isFocused
     
     private var continueButtonDisabled: Bool {
         switch viewModel.nameCheckState {
@@ -32,6 +33,7 @@ struct NewPatternNameInputView: View {
                 
                 HStack {
                     TextField("Design Pattern Name", text: $viewModel.name)
+                        .focused($isFocused)
                     
                     checkIcon
                 }
@@ -75,7 +77,7 @@ struct NewPatternNameInputView: View {
                 get: { continueButtonDisabled },
                 set: { _ in }
             ),
-            action: viewModel.nextStep
+            action: setToNextStep
         ) {
             HStack(spacing: 8) {
                 Text("Continue")
@@ -85,6 +87,11 @@ struct NewPatternNameInputView: View {
                     .fontWeight(.bold)
             }
         }
+    }
+    
+    private func setToNextStep() {
+        isFocused = false
+        viewModel.nextStep()
     }
 }
 

@@ -33,7 +33,7 @@ class AddDesignPatternUseCase: AddDesignPatternUseCaseProtocol {
         
         try await designPatternRepository.addPattern(newPattern)
         
-        for example in codeExamples {
+        for example in codeExamples where !example.isEmpty {
             try? await codeExampleRepository.addCodeExample(example, for: newPattern.id)
         }
     }

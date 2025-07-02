@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 @MainActor
 class NewPatternViewModel: ObservableObject {
@@ -19,6 +20,7 @@ class NewPatternViewModel: ObservableObject {
     @Published var selectedType: DesignPatternType?
     
     @Published var description: String = ""
+    @Published var codeExamples: [String] = [""]
     
     private let useCase: AddDesignPatternUseCaseProtocol
     
@@ -44,7 +46,7 @@ class NewPatternViewModel: ObservableObject {
         case .confirm:
             break
         }
-        creationStep = creationStep.next
+        withAnimation(.easeInOut(duration: 0.2)) { creationStep = creationStep.next }
     }
     
     private func bindNameInput() {

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2AB77B7A2E15C6F60058AA51 /* Runestone in Frameworks */ = {isa = PBXBuildFile; productRef = 2AB77B792E15C6F60058AA51 /* Runestone */; };
+		2AB77B7F2E15C9800058AA51 /* TreeSitterLanguagesCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2AB77B7E2E15C9800058AA51 /* TreeSitterLanguagesCommon */; };
+		2AB77B812E15C9800058AA51 /* TreeSitterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2AB77B802E15C9800058AA51 /* TreeSitterSwift */; };
+		2AB77B832E15C9800058AA51 /* TreeSitterSwiftQueries in Frameworks */ = {isa = PBXBuildFile; productRef = 2AB77B822E15C9800058AA51 /* TreeSitterSwiftQueries */; };
+		2AB77B852E15C9800058AA51 /* TreeSitterSwiftRunestone in Frameworks */ = {isa = PBXBuildFile; productRef = 2AB77B842E15C9800058AA51 /* TreeSitterSwiftRunestone */; };
 		2AD0B3102E09D66F009A93A3 /* DesignPatterns.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2AD0B30E2E09D66F009A93A3 /* DesignPatterns.xcdatamodeld */; };
 		2AD0D0092E11843F009A93A3 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 2AD0D0082E11843F009A93A3 /* SnapshotTesting */; };
 		2AD0D0EC2E11BD7C009A93A3 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 2AD0D0EB2E11BD7C009A93A3 /* Lottie */; };
@@ -85,7 +90,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AB77B7F2E15C9800058AA51 /* TreeSitterLanguagesCommon in Frameworks */,
+				2AB77B7A2E15C6F60058AA51 /* Runestone in Frameworks */,
+				2AB77B832E15C9800058AA51 /* TreeSitterSwiftQueries in Frameworks */,
 				2AD0D0EC2E11BD7C009A93A3 /* Lottie in Frameworks */,
+				2AB77B812E15C9800058AA51 /* TreeSitterSwift in Frameworks */,
+				2AB77B852E15C9800058AA51 /* TreeSitterSwiftRunestone in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,6 +176,11 @@
 			name = DesignPatterns;
 			packageProductDependencies = (
 				2AD0D0EB2E11BD7C009A93A3 /* Lottie */,
+				2AB77B792E15C6F60058AA51 /* Runestone */,
+				2AB77B7E2E15C9800058AA51 /* TreeSitterLanguagesCommon */,
+				2AB77B802E15C9800058AA51 /* TreeSitterSwift */,
+				2AB77B822E15C9800058AA51 /* TreeSitterSwiftQueries */,
+				2AB77B842E15C9800058AA51 /* TreeSitterSwiftRunestone */,
 			);
 			productName = DesignPatterns;
 			productReference = 2A08E5E62DCD455E008E90A2 /* DesignPatterns.app */;
@@ -280,6 +295,8 @@
 			packageReferences = (
 				2AD0CFF52E11833D009A93A3 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				2AD0D0EA2E11BD7C009A93A3 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				2AB77B782E15C6F60058AA51 /* XCRemoteSwiftPackageReference "Runestone" */,
+				2AB77B7D2E15C9800058AA51 /* XCRemoteSwiftPackageReference "treesitterlanguages" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2A08E5E72DCD455E008E90A2 /* Products */;
@@ -726,6 +743,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2AB77B782E15C6F60058AA51 /* XCRemoteSwiftPackageReference "Runestone" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simonbs/Runestone";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.1;
+			};
+		};
+		2AB77B7D2E15C9800058AA51 /* XCRemoteSwiftPackageReference "treesitterlanguages" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simonbs/treesitterlanguages";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.10;
+			};
+		};
 		2AD0CFF52E11833D009A93A3 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
@@ -745,6 +778,31 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2AB77B792E15C6F60058AA51 /* Runestone */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2AB77B782E15C6F60058AA51 /* XCRemoteSwiftPackageReference "Runestone" */;
+			productName = Runestone;
+		};
+		2AB77B7E2E15C9800058AA51 /* TreeSitterLanguagesCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2AB77B7D2E15C9800058AA51 /* XCRemoteSwiftPackageReference "treesitterlanguages" */;
+			productName = TreeSitterLanguagesCommon;
+		};
+		2AB77B802E15C9800058AA51 /* TreeSitterSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2AB77B7D2E15C9800058AA51 /* XCRemoteSwiftPackageReference "treesitterlanguages" */;
+			productName = TreeSitterSwift;
+		};
+		2AB77B822E15C9800058AA51 /* TreeSitterSwiftQueries */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2AB77B7D2E15C9800058AA51 /* XCRemoteSwiftPackageReference "treesitterlanguages" */;
+			productName = TreeSitterSwiftQueries;
+		};
+		2AB77B842E15C9800058AA51 /* TreeSitterSwiftRunestone */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2AB77B7D2E15C9800058AA51 /* XCRemoteSwiftPackageReference "treesitterlanguages" */;
+			productName = TreeSitterSwiftRunestone;
+		};
 		2AD0D0082E11843F009A93A3 /* SnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2AD0CFF52E11833D009A93A3 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;

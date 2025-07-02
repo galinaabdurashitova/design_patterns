@@ -81,9 +81,9 @@ struct NewPatternView: View {
         case .type:
             NewPatternChooseTypeView(viewModel: viewModel)
         case .description:
-            EmptyView()
+            NewPatternDescriptionInputView(viewModel: viewModel)
         case .codeExamples:
-            EmptyView()
+            NewPatternCodeExamplesView(viewModel: viewModel)
         case .confirm:
             EmptyView()
         }

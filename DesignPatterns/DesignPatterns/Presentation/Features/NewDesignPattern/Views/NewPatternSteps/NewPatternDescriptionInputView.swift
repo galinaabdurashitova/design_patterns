@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NewPatternDescriptionInputView: View {
     @ObservedObject var viewModel: NewPatternViewModel
+    @FocusState var isFocused
     
     private var continueButtonDisabled: Bool {
         viewModel.description.isEmpty
@@ -26,6 +27,7 @@ struct NewPatternDescriptionInputView: View {
                     text: $viewModel.description,
                     axis: .vertical
                 )
+                .focused($isFocused)
                 .frame(minHeight: 100, alignment: .topLeading)
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
@@ -45,7 +47,7 @@ struct NewPatternDescriptionInputView: View {
                 get: { continueButtonDisabled },
                 set: { _ in }
             ),
-            action: viewModel.nextStep
+            action: setToNextStep
         ) {
             HStack(spacing: 8) {
                 Text("Continue")
@@ -55,6 +57,11 @@ struct NewPatternDescriptionInputView: View {
                     .fontWeight(.bold)
             }
         }
+    }
+    
+    private func setToNextStep() {
+        isFocused = false
+        viewModel.nextStep()
     }
 }
 
