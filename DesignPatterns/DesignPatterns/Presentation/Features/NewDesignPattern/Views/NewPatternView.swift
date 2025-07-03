@@ -36,7 +36,6 @@ struct NewPatternView: View {
             topBar
             progressSeparatorBar
             contentView
-                .padding(.horizontal)
                 .padding(.bottom)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -78,10 +77,13 @@ struct NewPatternView: View {
         switch viewModel.creationStep {
         case .name:
             NewPatternNameInputView(viewModel: viewModel)
+                .padding(.horizontal)
         case .type:
             NewPatternChooseTypeView(viewModel: viewModel)
+                .padding(.horizontal)
         case .description:
             NewPatternDescriptionInputView(viewModel: viewModel)
+                .padding(.horizontal)
         case .codeExamples:
             NewPatternCodeExamplesView(viewModel: viewModel)
         case .confirm:
