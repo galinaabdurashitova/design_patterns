@@ -19,4 +19,14 @@ enum DesignPatternCreationStep: CaseIterable {
         case .confirm:      self
         }
     }
+    
+    var previous: DesignPatternCreationStep {
+        switch self {
+        case .name:         self
+        case .type:         DesignPatternCreationStep.name
+        case .description:  DesignPatternCreationStep.type
+        case .codeExamples: DesignPatternCreationStep.description
+        case .confirm:      DesignPatternCreationStep.codeExamples
+        }
+    }
 }

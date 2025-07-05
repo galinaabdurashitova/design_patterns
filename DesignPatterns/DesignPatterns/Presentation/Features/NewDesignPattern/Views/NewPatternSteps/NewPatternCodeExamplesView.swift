@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NewPatternCodeExamplesView: View {
     @ObservedObject var viewModel: NewPatternViewModel
-    @FocusState var isFocused
+    @FocusState var focusedField: Int?
         
     @State private var borderColor: Color = Color(.systemGray)
     @State private var shakeOffset: CGFloat = 0
@@ -27,7 +27,7 @@ struct NewPatternCodeExamplesView: View {
                 
                 textFieldsStack
                 
-                buttonView
+                buttonsView
                     .padding(.top, 48)
             }
             .padding(.horizontal)
@@ -36,17 +36,17 @@ struct NewPatternCodeExamplesView: View {
     
     private var textFieldsStack: some View {
         VStack(spacing: 8) {
-            ForEach(viewModel.codeExamples.indices, id: \.self) { exampleIndex in
+            ForEach(Array(viewModel.codeExamples.enumerated()), id: \.offset) { exampleIndex, example in
                 ZStack(alignment: .topTrailing) {
                     SyntaxHighlightTextView(
                         text: Binding(
-                            get: { viewModel.codeExamples[exampleIndex] },
+                            get: { viewModel.codeExamples.count > exampleIndex ? viewModel.codeExamples[exampleIndex] : example },
                             set: { text in
                                 viewModel.codeExamples[exampleIndex] = text
                             }
                         )
                     )
-                    .focused($isFocused)
+                    .focused($focusedField, equals: exampleIndex)
                     .frame(minHeight: 120, alignment: .topLeading)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
@@ -60,15 +60,15 @@ struct NewPatternCodeExamplesView: View {
                             )
                     )
                     
-                    if viewModel.codeExamples.count > 1 {
+                    if viewModel.codeExamples.count > 1 || !example.isEmpty {
                         deleteOptionButton(index: exampleIndex)
                             .padding([.top, .trailing], -8)
                     }
                 }
                 .offset(
                     x: viewModel.codeExamples[exampleIndex].isEmpty
-                        ? shakeOffset
-                        : 0
+                    ? shakeOffset
+                    : 0
                 )
             }
             
@@ -77,7 +77,9 @@ struct NewPatternCodeExamplesView: View {
     }
     
     private var addCodeExampleButton: some View {
-        Button(action: addOption) {
+        Button(action: {
+            viewModel.addOption(onAddRestricted: shakeAndHighlight)
+        }) {
             HStack(spacing: 4) {
                 Image(systemName: "plus.circle.fill")
                     .font(.system(size: 18))
@@ -98,7 +100,7 @@ struct NewPatternCodeExamplesView: View {
     
     private func deleteOptionButton(index: Int) -> some View {
         Button(action: {
-            deleteOption(index: index)
+            viewModel.deleteOption(index: index)
         }) {
             Image(systemName: "xmark.circle.fill")
                 .font(.system(size: 20, weight: .bold))
@@ -107,46 +109,43 @@ struct NewPatternCodeExamplesView: View {
         }
     }
     
-    private var buttonView: some View {
-        MainButtonView(
-            isDisabled: Binding(
-                get: { continueButtonDisabled },
-                set: { _ in }
-            ),
-            action: setToNextStep
-        ) {
-            HStack(spacing: 8) {
-                Text("Continue")
-                    .font(.system(size: 14, weight: .bold))
-                    .fontWidth(.expanded)
-                Image(systemName: "arrow.right")
-                    .fontWeight(.bold)
+    private var buttonsView: some View {
+        HStack(spacing: 8) {
+            MainButtonView(colour: .primary.opacity(0.2)) {
+                viewModel.creationStep = viewModel.creationStep.previous
+            } content: {
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.left")
+                        .fontWeight(.bold)
+                    Text("Back")
+                        .font(.system(size: 14, weight: .bold))
+                        .fontWidth(.expanded)
+                }
+            }
+            
+            MainButtonView(
+                isDisabled: Binding(
+                    get: { continueButtonDisabled },
+                    set: { _ in }
+                ),
+                action: setToNextStep
+            ) {
+                HStack(spacing: 8) {
+                    Text("Continue")
+                        .font(.system(size: 14, weight: .bold))
+                        .fontWidth(.expanded)
+                    Image(systemName: "arrow.right")
+                        .fontWeight(.bold)
+                }
             }
         }
     }
     
     // MARK: - Functions
-    private func addOption() {
-        if !viewModel.codeExamples.contains(where: { $0.isEmpty }) {
-            viewModel.codeExamples.append("")
-        } else {
-            shakeAndHighlight()
-        }
-    }
-    
-    private func deleteOption(index: Int) {
-        if viewModel.codeExamples.count > 1 {
-            viewModel.codeExamples.remove(at: index)
-        } else {
-            viewModel.codeExamples[0] = ""
-        }
-    }
-    
     private func shakeAndHighlight() {
         let times = 3
         
         for i in 0...times {
-            print(String(i))
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(i)*0.1) {
                 withAnimation(.default) {
                     switch i {
@@ -165,7 +164,7 @@ struct NewPatternCodeExamplesView: View {
     }
     
     private func setToNextStep() {
-        isFocused = false
+        focusedField = nil
         viewModel.nextStep()
     }
 }

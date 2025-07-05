@@ -75,4 +75,22 @@ class NewPatternViewModel: ObservableObject {
             }
         }
     }
+    
+    func addOption(onAddRestricted: @escaping () -> Void) {
+        if !codeExamples.contains(where: { $0.isEmpty }) {
+            codeExamples.append("")
+        } else {
+            onAddRestricted()
+        }
+    }
+    
+    func deleteOption(index: Int) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if codeExamples.count > 1 {
+                codeExamples.remove(at: index)
+            } else {
+                codeExamples[0] = ""
+            }
+        }
+    }
 }

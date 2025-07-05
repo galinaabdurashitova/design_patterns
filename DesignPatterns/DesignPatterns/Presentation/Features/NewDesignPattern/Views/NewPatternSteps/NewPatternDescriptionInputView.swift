@@ -37,24 +37,38 @@ struct NewPatternDescriptionInputView: View {
                 )
             }
             
-            buttonView
+            buttonsView
         }
     }
     
-    private var buttonView: some View {
-        MainButtonView(
-            isDisabled: Binding(
-                get: { continueButtonDisabled },
-                set: { _ in }
-            ),
-            action: setToNextStep
-        ) {
-            HStack(spacing: 8) {
-                Text("Continue")
-                    .font(.system(size: 14, weight: .bold))
-                    .fontWidth(.expanded)
-                Image(systemName: "arrow.right")
-                    .fontWeight(.bold)
+    private var buttonsView: some View {
+        HStack(spacing: 8) {
+            MainButtonView(colour: .primary.opacity(0.2)) {
+                viewModel.creationStep = viewModel.creationStep.previous
+            } content: {
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.left")
+                        .fontWeight(.bold)
+                    Text("Back")
+                        .font(.system(size: 14, weight: .bold))
+                        .fontWidth(.expanded)
+                }
+            }
+            
+            MainButtonView(
+                isDisabled: Binding(
+                    get: { continueButtonDisabled },
+                    set: { _ in }
+                ),
+                action: setToNextStep
+            ) {
+                HStack(spacing: 8) {
+                    Text("Continue")
+                        .font(.system(size: 14, weight: .bold))
+                        .fontWidth(.expanded)
+                    Image(systemName: "arrow.right")
+                        .fontWeight(.bold)
+                }
             }
         }
     }

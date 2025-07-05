@@ -9,13 +9,12 @@ import SwiftUI
 import TreeSitterSwiftRunestone
 import Runestone
 
-// Broken
 struct SyntaxHighlightTextView: UIViewRepresentable {
     @Binding var text: String
     
     func makeUIView(context: Context) -> TextView {
         let textView = TextView()
-        textView.delegate = context.coordinator
+        textView.editorDelegate = context.coordinator
         textView.backgroundColor = .systemBackground
         textView.isEditable = true
         textView.isScrollEnabled = true
@@ -28,9 +27,10 @@ struct SyntaxHighlightTextView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: TextView, context: Context) {
-        if uiView.text != text {
-            updateTextViewState(uiView, text: text)
-        }
+        guard uiView.text != text else { return }
+
+        uiView.text = text 
+        updateTextViewState(uiView, text: text)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -47,14 +47,14 @@ struct SyntaxHighlightTextView: UIViewRepresentable {
         }
     }
     
-    class Coordinator: NSObject, UITextViewDelegate {
+    class Coordinator: NSObject, TextViewDelegate {
         var parent: SyntaxHighlightTextView
 
         init(_ parent: SyntaxHighlightTextView) {
             self.parent = parent
         }
 
-        private func textViewDidChange(_ textView: TextView) {
+        func textViewDidChange(_ textView: TextView) {
             parent.text = textView.text
         }
     }
