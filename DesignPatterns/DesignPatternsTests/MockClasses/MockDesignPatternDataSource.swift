@@ -35,4 +35,9 @@ class MockDesignPatternDataSource: DesignPatternDataSourceProtocol {
         }
         patterns[index] = pattern
     }
+    
+    func deletePattern(_ id: UUID) throws {
+        if throwError { throw TestError.sample }
+        patterns.removeAll(where: { $0.id == id })
+    }
 }

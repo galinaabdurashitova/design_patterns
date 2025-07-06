@@ -12,10 +12,9 @@ class MockAddDesignPatternUseCase: AddDesignPatternUseCaseProtocol {
     var patterns = MockDesignPatterns.patterns
     var throwError: Bool = false
     
-    func addPattern(name: String, type: DesignPatternType, description: String, codeExamples: [String]) throws {
+    func addPattern(pattern: DesignPattern, codeExamples: [String]) throws {
         if throwError { throw TestError.sample }
-        let newPattern = DesignPattern(name: name, type: type, patternDescription: description)
-        patterns.append(newPattern)
+        patterns.append(pattern)
     }
     
     func checkPatternNameUsed(_ name: String) throws -> Bool {

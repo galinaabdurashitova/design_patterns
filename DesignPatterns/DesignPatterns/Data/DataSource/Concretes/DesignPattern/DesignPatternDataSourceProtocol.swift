@@ -12,4 +12,5 @@ protocol DesignPatternDataSourceProtocol {
     func getPatterns() async throws -> [DesignPattern]
     func addPattern(_ pattern: DesignPattern) async throws
     func updatePattern(_ id: UUID, pattern: DesignPattern) async throws
+    func deletePattern(_ id: UUID) async throws
 }

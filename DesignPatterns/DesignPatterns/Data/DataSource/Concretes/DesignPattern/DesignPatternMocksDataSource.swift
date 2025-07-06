@@ -33,4 +33,12 @@ class DesignPatternMocksDataSource: DesignPatternDataSourceProtocol {
         
         MockDesignPatterns.patterns[patternIndex] = pattern
     }
+    
+    
+    func deletePattern(_ id: UUID) async throws {
+        guard let patternIndex = MockDesignPatterns.patterns.firstIndex(where: { $0.id == id }) else {
+            throw DataSourceError.notFound
+        }
+        MockDesignPatterns.patterns.remove(at: patternIndex)
+    }
 }

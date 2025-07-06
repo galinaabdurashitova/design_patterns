@@ -10,23 +10,15 @@ import SwiftUI
 struct NewPatternChooseTypeView: View {
     @ObservedObject var viewModel: NewPatternViewModel
     
-    private var continueButtonDisabled: Bool {
-        viewModel.selectedType == nil
-    }
-    
     var body: some View {
-        VStack(spacing: 60) {
-            VStack(spacing: 12) {
-                Text("Select a type for the new pattern")
-                    .fontWeight(.bold)
-                    .fontDesign(.rounded)
-                
-                ForEach(DesignPatternType.allCases, id: \.self) { type in
-                    typeOptionView(type)
-                }
-            }
+        VStack(spacing: 12) {
+            Text("Select a type for the new pattern")
+                .fontWeight(.bold)
+                .fontDesign(.rounded)
             
-            buttonsView
+            ForEach(DesignPatternType.allCases, id: \.self) { type in
+                typeOptionView(type)
+            }
         }
     }
     
@@ -81,38 +73,6 @@ struct NewPatternChooseTypeView: View {
                         lineWidth: viewModel.selectedType == type ? 4 : 2
                     )
             )
-        }
-    }
-    
-    private var buttonsView: some View {
-        HStack(spacing: 8) {
-            MainButtonView(colour: .primary.opacity(0.2)) {
-                viewModel.creationStep = viewModel.creationStep.previous
-            } content: {
-                HStack(spacing: 8) {
-                    Image(systemName: "arrow.left")
-                        .fontWeight(.bold)
-                    Text("Back")
-                        .font(.system(size: 14, weight: .bold))
-                        .fontWidth(.expanded)
-                }
-            }
-            
-            MainButtonView(
-                isDisabled: Binding(
-                    get: { continueButtonDisabled },
-                    set: { _ in }
-                ),
-                action: viewModel.nextStep
-            ) {
-                HStack(spacing: 8) {
-                    Text("Continue")
-                        .font(.system(size: 14, weight: .bold))
-                        .fontWidth(.expanded)
-                    Image(systemName: "arrow.right")
-                        .fontWeight(.bold)
-                }
-            }
         }
     }
 }

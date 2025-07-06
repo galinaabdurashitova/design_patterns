@@ -33,7 +33,7 @@ class CodeExampleCoreDataDataSource: CodeExampleDataSourceProtocol {
         _ = CodeExampleMapper.toEntity(
             from: codeExample,
             designPattern: patternEntity,
-            context: coreData.create(DesignPatternEntity.self).managedObjectContext!
+            context: coreData.context
         )
         try coreData.saveIfNeeded()
     }

@@ -39,7 +39,8 @@ struct DesignPatternsListView<ViewModel: DesignPatternsListViewModelProtocol>: V
         ) {
             NewPatternView(
                 viewModel: ViewModelFactory.makeNewPatternViewModel(),
-                isPresented: $isNewPatternSheetPresented
+                isPresented: $isNewPatternSheetPresented,
+                onPatternAdd: viewModel.fetchDesignPatterns
             )
         }
     }
@@ -76,6 +77,13 @@ struct DesignPatternsListView<ViewModel: DesignPatternsListViewModelProtocol>: V
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) {
+                        viewModel.deletePattern(pattern)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
                 .accessibilityIdentifier("patternRow-\(pattern.name)")
         }
         .listStyle(.plain)

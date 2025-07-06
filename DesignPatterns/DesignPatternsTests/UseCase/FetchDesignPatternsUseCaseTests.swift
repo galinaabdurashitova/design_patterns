@@ -80,4 +80,19 @@ final class FetchDesignPatternsUseCaseTests: XCTestCase {
             XCTAssertTrue(error is TestError)
         }
     }
+    
+    func test_deletePattern_success() async throws {
+        try await useCase.deletePattern(TestDesignPatterns.patterns[0].id)
+        XCTAssertEqual(mockDesignPatternRepository.patterns.count, TestDesignPatterns.patterns.count - 1)
+    }
+    
+    func test_deletePattern_throwError() async {
+        mockDesignPatternRepository.throwError = true
+        do {
+            try await useCase.deletePattern(TestDesignPatterns.patterns[0].id)
+            XCTFail("Expected error but got success")
+        } catch {
+            XCTAssertTrue(error is TestError)
+        }
+    }
 }

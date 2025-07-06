@@ -5,6 +5,7 @@
 //  Created by Galina Abdurashitova on 29.06.2025.
 //
 
+import Foundation
 @testable import DesignPatterns
 
 class MockFetchDesignPatternsUseCase: FetchDesignPatternsUseCaseProtocol {
@@ -29,5 +30,10 @@ class MockFetchDesignPatternsUseCase: FetchDesignPatternsUseCaseProtocol {
         if throwError { throw TestError.sample }
         let newPattern = DesignPattern(name: name, type: type, patternDescription: description)
         patterns.append(newPattern)
+    }
+    
+    func deletePattern(_ id: UUID) throws {
+        if throwError { throw TestError.sample }
+        patterns.removeAll(where: { $0.id == id })
     }
 }

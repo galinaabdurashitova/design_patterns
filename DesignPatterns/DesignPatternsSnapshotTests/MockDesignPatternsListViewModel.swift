@@ -17,4 +17,7 @@ class MockDesignPatternsListViewModel: DesignPatternsListViewModelProtocol, Obse
     
     @MainActor
     func fetchDesignPatterns() { }
+    
+    @MainActor
+    func deletePattern(_ pattern: DesignPattern) { }
 }

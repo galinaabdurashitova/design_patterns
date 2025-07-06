@@ -35,4 +35,14 @@ class MockDesignPatternRepository: DesignPatternRepositoryProtocol {
         }
         patterns[index] = pattern
     }
+    
+    func deletePattern(_ id: UUID) throws {
+        if throwError { throw TestError.sample }
+        patterns.removeAll(where: { $0.id == id })
+    }
+    
+    func isNameUsed(_ patternName: String) throws -> Bool {
+        if throwError { throw TestError.sample }
+        return patterns.contains(where: { $0.name == patternName })
+    }
 }

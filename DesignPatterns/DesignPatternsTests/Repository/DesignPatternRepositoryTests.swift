@@ -93,4 +93,41 @@ final class DesignPatternRepositoryTests: XCTestCase {
             XCTAssertTrue(error is DataSourceError)
         }
     }
+    
+    func test_deletePattern_success() async throws {
+        try await repository.deletePattern(TestDesignPatterns.patterns[0].id)
+        let patterns = try await repository.getPatterns()
+        XCTAssertEqual(patterns.count, TestDesignPatterns.patterns.count - 1)
+    }
+    
+    func test_deletePattern_whenDataSourceThrowsError_throwsError() async {
+        mockDataSource.throwError = true
+        do {
+            try await repository.deletePattern(TestDesignPatterns.patterns[0].id)
+            XCTFail("Expected error but got success")
+        } catch {
+            XCTAssertTrue(error is TestError)
+            XCTAssertEqual(mockDataSource.patterns.count, TestDesignPatterns.patterns.count)
+        }
+    }
+    
+    func test_isNameUsed_whenPatternWithSameName_returnsTrue() async throws {
+        let result = try await repository.isNameUsed(TestDesignPatterns.patterns[0].name)
+        XCTAssertTrue(result)
+    }
+    
+    func test_isNameUsed_whenNoPatternWithSameName_returnsFalse() async throws {
+        let result = try await repository.isNameUsed("Test")
+        XCTAssertFalse(result)
+    }
+    
+    func test_isNameUsed_whenDataSourceThrowsError_rethrowsError() async {
+        mockDataSource.throwError = true
+        do {
+            _ = try await repository.isNameUsed(TestDesignPatterns.patterns[0].name)
+            XCTFail("Expected error but got success")
+        } catch {
+            XCTAssertTrue(error is TestError)
+        }
+    }
 }

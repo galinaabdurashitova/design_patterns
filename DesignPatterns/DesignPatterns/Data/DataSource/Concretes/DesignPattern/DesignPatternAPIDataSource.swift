@@ -29,4 +29,8 @@ class DesignPatternAPIDataSource: DesignPatternDataSourceProtocol {
     func updatePattern(_ id: UUID, pattern: DesignPattern) async throws {
         throw DataSourceError.notImplemented
     }
+    
+    func deletePattern(_ id: UUID) async throws {
+        throw DataSourceError.notImplemented
+    }
 }

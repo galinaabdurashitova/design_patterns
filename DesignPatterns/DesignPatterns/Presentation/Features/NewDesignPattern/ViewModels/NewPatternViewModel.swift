@@ -11,28 +11,62 @@ import SwiftUI
 
 @MainActor
 class NewPatternViewModel: ObservableObject {
+    // Steps
     @Published var creationStep: DesignPatternCreationStep = .name
-    @Published var patternBuilder: DesignPattern.Builder = .init()
     
+    // 1. Name step
     @Published var name: String = ""
     @Published var nameCheckState: UIState<Bool> = .idle
-    
-    @Published var selectedType: DesignPatternType?
-    
-    @Published var description: String = ""
-    @Published var codeExamples: [String] = [""]
-    
-    private let useCase: AddDesignPatternUseCaseProtocol
-    
     private var cancellables = Set<AnyCancellable>()
     private let debounceIntervalMs: Int = 600
+    
+    // 2. Type step
+    @Published var selectedType: DesignPatternType?
+    
+    // 3. Description step
+    @Published var description: String = ""
+    
+    // 4. Code examples step
+    @Published var codeExamples: [String] = [""]
+    
+    // New pattern
+    @Published var patternBuilder: DesignPattern.Builder = .init()
+    @Published var addPatternState: UIState<Bool> = .idle
+    
+    // Use case
+    private let useCase: AddDesignPatternUseCaseProtocol
     
     init(useCase: AddDesignPatternUseCaseProtocol) {
         self.useCase = useCase
         bindNameInput()
     }
     
-    func nextStep() {
+    // MARK: - Steps logic
+    var continueButtonDisabled: Bool {
+        switch creationStep {
+        case .name:
+            switch nameCheckState {
+            case .success(let result):
+                result || name.isEmpty
+            default:
+                true
+            }
+        case .type:
+            selectedType == nil
+        case .description:
+            description.isEmpty
+        case .codeExamples:
+            codeExamples.allSatisfy { $0.isEmpty }
+        case .confirm:
+            false
+        }
+    }
+    
+    func previousStep() {
+        withAnimation(.easeInOut(duration: 0.2)) { creationStep = creationStep.previous }
+    }
+    
+    func nextStep(onAddFinished: @escaping () -> Void) {
         switch creationStep {
         case .name:
             patternBuilder = patternBuilder.setName(name)
@@ -40,15 +74,16 @@ class NewPatternViewModel: ObservableObject {
             guard let selectedType else { return }
             patternBuilder = patternBuilder.setType(selectedType)
         case .description:
-            break
+            patternBuilder = patternBuilder.setDescription(description)
         case .codeExamples:
-            break
+            codeExamples = codeExamples.filter { !$0.isEmpty }
         case .confirm:
-            break
+            addPattern(onAddFinished: onAddFinished)
         }
         withAnimation(.easeInOut(duration: 0.2)) { creationStep = creationStep.next }
     }
     
+    // MARK: - Name validation
     private func bindNameInput() {
         $name
             .removeDuplicates()
@@ -76,6 +111,7 @@ class NewPatternViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Code examples methods
     func addOption(onAddRestricted: @escaping () -> Void) {
         if !codeExamples.contains(where: { $0.isEmpty }) {
             codeExamples.append("")
@@ -90,6 +126,21 @@ class NewPatternViewModel: ObservableObject {
                 codeExamples.remove(at: index)
             } else {
                 codeExamples[0] = ""
+            }
+        }
+    }
+    
+    // MARK: - Add patern
+    func addPattern(onAddFinished: @escaping () -> Void) {
+        addPatternState = .loading
+        Task {
+            do {
+                let newPattern = try patternBuilder.build()
+                try await useCase.addPattern(pattern: newPattern, codeExamples: codeExamples)
+                onAddFinished()
+                addPatternState = .success(true)
+            } catch {
+                addPatternState = .error(error)
             }
         }
     }

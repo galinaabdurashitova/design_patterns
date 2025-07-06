@@ -10,6 +10,7 @@ import Foundation
 protocol FetchDesignPatternsUseCaseProtocol {
     func getPatterns() async throws -> [DesignPattern]
     func getPatternsFiltered(byName: String, byTypes: [DesignPatternType]) async throws -> [DesignPattern]
+    func deletePattern(_ id: UUID) async throws
 }
 
 class FetchDesignPatternsUseCase<Filter: FilterProtocol>: FetchDesignPatternsUseCaseProtocol where Filter.T == DesignPattern {
@@ -44,5 +45,9 @@ class FetchDesignPatternsUseCase<Filter: FilterProtocol>: FetchDesignPatternsUse
         } else {
             return patterns
         }
+    }
+    
+    func deletePattern(_ id: UUID) async throws {
+        try await designPatternRepository.deletePattern(id)
     }
 }

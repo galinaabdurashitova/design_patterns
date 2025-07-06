@@ -24,33 +24,26 @@ final class AddDesignPatternUseCaseTests: XCTestCase {
     }
     
     func test_addPattern_success() async throws {
-        try await useCase.addPattern(name: "Test", type: .behavioral, description: "A", codeExamples: ["// Code example"])
+        let newPattern = DesignPattern(id: UUID(), name: "Test", type: .behavioral, patternDescription: "A")
+        try await useCase.addPattern(pattern: newPattern, codeExamples: ["// Code example"])
         let newPatterns = mockDesignPatternRepository.patterns
         XCTAssertEqual(newPatterns.count, TestDesignPatterns.patterns.count+1)
         
-        let newPattern = newPatterns[newPatterns.count-1]
-        XCTAssertEqual(newPattern.name, "Test")
-        XCTAssertEqual(newPattern.type, .behavioral)
-        XCTAssertEqual(newPattern.patternDescription, "A")
+        let newPatternAdded = newPatterns[newPatterns.count-1]
+        XCTAssertEqual(newPatternAdded.name, "Test")
+        XCTAssertEqual(newPatternAdded.type, .behavioral)
+        XCTAssertEqual(newPatternAdded.patternDescription, "A")
         
         XCTAssertEqual(mockCodeExampleRepository.examples.count, 1)
         XCTAssertEqual(mockCodeExampleRepository.examples[0].code, "// Code example")
         XCTAssertEqual(mockCodeExampleRepository.examples[0].patternId, newPattern.id)
     }
     
-    func test_addPattern_withBuilderError() async {
-        do {
-            try await useCase.addPattern(name: "", type: .behavioral, description: "", codeExamples: [])
-            XCTFail("Expected error but got success")
-        } catch {
-            XCTAssertTrue(error is DesignPatternError)
-        }
-    }
-    
     func test_addPattern_withRepositoryError() async {
         mockDesignPatternRepository.throwError = true
         do {
-            try await useCase.addPattern(name: "Test", type: .behavioral, description: "", codeExamples: [])
+            let newPattern = DesignPattern(name: "Test", type: .behavioral, patternDescription: "A")
+            try await useCase.addPattern(pattern: newPattern, codeExamples: [])
             XCTFail("Expected error but got success")
         } catch {
             XCTAssertTrue(error is TestError)

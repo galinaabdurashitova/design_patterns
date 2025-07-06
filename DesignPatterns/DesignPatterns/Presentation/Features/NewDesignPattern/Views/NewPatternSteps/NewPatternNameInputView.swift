@@ -11,15 +11,6 @@ struct NewPatternNameInputView: View {
     @ObservedObject var viewModel: NewPatternViewModel
     @FocusState var isFocused
     
-    private var continueButtonDisabled: Bool {
-        switch viewModel.nameCheckState {
-        case .success(let result):
-            result || viewModel.name.isEmpty
-        default:
-            true
-        }
-    }
-    
     var body: some View {
         VStack(spacing: 60) {
             LottieView(animationFileName: "pattern_lottie", loopMode: .loop)
@@ -50,8 +41,9 @@ struct NewPatternNameInputView: View {
                         .foregroundColor(.red)
                 }
             }
-            
-            buttonView
+        }
+        .onDisappear {
+            isFocused = false
         }
     }
     
@@ -69,29 +61,6 @@ struct NewPatternNameInputView: View {
             Image(systemName: t ? "xmark" : "checkmark")
                 .foregroundColor(t ? .red : .green)
         }
-    }
-    
-    private var buttonView: some View {
-        MainButtonView(
-            isDisabled: Binding(
-                get: { continueButtonDisabled },
-                set: { _ in }
-            ),
-            action: setToNextStep
-        ) {
-            HStack(spacing: 8) {
-                Text("Continue")
-                    .font(.system(size: 14, weight: .bold))
-                    .fontWidth(.expanded)
-                Image(systemName: "arrow.right")
-                    .fontWeight(.bold)
-            }
-        }
-    }
-    
-    private func setToNextStep() {
-        isFocused = false
-        viewModel.nextStep()
     }
 }
 

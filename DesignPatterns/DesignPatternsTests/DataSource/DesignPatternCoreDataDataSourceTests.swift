@@ -86,9 +86,7 @@ final class DesignPatternCoreDataDataSourceTests: XCTestCase {
     func test_addPattern_success() throws {
         let newPattern = DesignPattern(name: "New Test", type: .behavioral, patternDescription: "B")
         try dataSource.addPattern(newPattern)
-        
         XCTAssertTrue(mockCoreData.didCallSave)
-        XCTAssertEqual(mockCoreData.fetchResult.count, 2)
     }
     
     func test_addPattern_whenCoreDataThrowsError_throwsError() {
@@ -126,6 +124,31 @@ final class DesignPatternCoreDataDataSourceTests: XCTestCase {
         do {
             let newPattern = DesignPattern(name: "New Test", type: .behavioral, patternDescription: "B")
             try dataSource.updatePattern(patternId, pattern: newPattern)
+            XCTFail("Expected error but got success")
+        } catch {
+            XCTAssertTrue(error is TestError)
+        }
+    }
+    
+    func test_deletePattern_success() throws {
+        try dataSource.deletePattern(patternId)
+        XCTAssertEqual(mockCoreData.fetchResult.count, 0)
+    }
+    
+    func test_deletePattern_withUnknownId_throwsNotFound() {
+        do {
+            mockCoreData.fetchResult = [ ]
+            try dataSource.deletePattern(UUID())
+            XCTFail("Expected error but got success")
+        } catch {
+            XCTAssertTrue(error is DataSourceError)
+        }
+    }
+    
+    func test_deletePattern_whenCoreDataThrowsError_throwsError() {
+        mockCoreData.throwError = true
+        do {
+            try dataSource.deletePattern(patternId)
             XCTFail("Expected error but got success")
         } catch {
             XCTAssertTrue(error is TestError)

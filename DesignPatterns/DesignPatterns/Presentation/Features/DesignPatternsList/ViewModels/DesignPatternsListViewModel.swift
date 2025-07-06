@@ -15,6 +15,7 @@ protocol DesignPatternsListViewModelProtocol: ObservableObject {
     @MainActor var selectedTypes: [DesignPatternType] { get set }
     @MainActor var isTypeFilterSheetPresented: Bool { get set }
     @MainActor func fetchDesignPatterns()
+    @MainActor func deletePattern(_ pattern: DesignPattern)
 }
 
 @MainActor
@@ -67,6 +68,18 @@ class DesignPatternsListViewModel: DesignPatternsListViewModelProtocol, Observab
                 designPatternsState = .success(patterns)
             } catch {
                 designPatternsState = .error(error)
+            }
+        }
+    }
+    
+    func deletePattern(_ pattern: DesignPattern) {
+        Task {
+            do {
+                try await useCase.deletePattern(pattern.id)
+                fetchDesignPatterns()
+            } catch {
+                // TODO: add nice error popup
+                print(error.localizedDescription)
             }
         }
     }

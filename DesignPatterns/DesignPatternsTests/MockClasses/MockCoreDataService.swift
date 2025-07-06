@@ -9,7 +9,7 @@ import CoreData
 @testable import DesignPatterns
 
 final class MockCoreDataService: CoreDataServiceProtocol {
-    private let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
     var throwError = false
     var didCallSave = false
 
@@ -53,7 +53,8 @@ final class MockCoreDataService: CoreDataServiceProtocol {
 
     func delete<T: NSManagedObject>(_ object: T) throws {
         if throwError { throw TestError.sample }
-        context.delete(object)
+        fetchResult.removeAll(where: { $0.objectID == object.objectID })
+//        context.delete(object)
     }
 
     var testContext: NSManagedObjectContext {

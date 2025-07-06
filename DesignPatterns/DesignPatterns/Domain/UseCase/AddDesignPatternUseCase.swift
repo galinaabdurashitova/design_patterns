@@ -8,7 +8,7 @@
 import Foundation
 
 protocol AddDesignPatternUseCaseProtocol {
-    func addPattern(name: String, type: DesignPatternType, description: String, codeExamples: [String]) async throws
+    func addPattern(pattern: DesignPattern, codeExamples: [String]) async throws
     func checkPatternNameUsed(_ name: String) async throws -> Bool
 }
 
@@ -24,22 +24,15 @@ class AddDesignPatternUseCase: AddDesignPatternUseCaseProtocol {
         self.codeExampleRepository = codeExampleRepository
     }
     
-    func addPattern(name: String, type: DesignPatternType, description: String, codeExamples: [String]) async throws {
-        let newPattern = try DesignPattern.builder()
-            .setName(name)
-            .setType(type)
-            .setDescription(description)
-            .build()
-        
-        try await designPatternRepository.addPattern(newPattern)
+    func addPattern(pattern: DesignPattern, codeExamples: [String]) async throws {
+        try await designPatternRepository.addPattern(pattern)
         
         for example in codeExamples where !example.isEmpty {
-            try? await codeExampleRepository.addCodeExample(example, for: newPattern.id)
+            try? await codeExampleRepository.addCodeExample(example, for: pattern.id)
         }
     }
     
     func checkPatternNameUsed(_ name: String) async throws -> Bool {
-        let patterns = try await designPatternRepository.getPatterns()
-        return patterns.contains(where: { $0.name.lowercased() == name.lowercased() })
+        return try await designPatternRepository.isNameUsed(name)
     }
 }

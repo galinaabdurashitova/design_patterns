@@ -38,6 +38,23 @@ final class DesignPatternsListViewModelTests: XCTestCase {
         XCTAssertTrue(error is TestError)
     }
     
+    func test_deletePattern_success_removesFromList() async {
+        let patternToDelete = mockUseCase.patterns.first!
+        viewModel.fetchDesignPatterns()
+        viewModel.deletePattern(patternToDelete)
+        try? await Task.sleep(nanoseconds: 200_000_000)
+        XCTAssertFalse(mockUseCase.patterns.contains(where: { $0.id == patternToDelete.id }))
+    }
+    
+    func test_deletePattern_withServerError_failure_doesNotRemoveFromList() async {
+        mockUseCase.throwError = true
+        viewModel.fetchDesignPatterns()
+        let patternToDelete = mockUseCase.patterns.first!
+        viewModel.deletePattern(patternToDelete)
+        try? await Task.sleep(nanoseconds: 200_000_000)
+        XCTAssertTrue(mockUseCase.patterns.contains(where: { $0.id == patternToDelete.id }))
+    }
+    
     func test_searchTextTriggersFilteredFetch_afterDebounce() async {
         viewModel.searchText = mockUseCase.patterns.first?.name ?? "Some"
         try? await Task.sleep(nanoseconds: 800_000_000)

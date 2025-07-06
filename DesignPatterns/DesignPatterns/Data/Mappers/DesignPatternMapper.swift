@@ -24,11 +24,15 @@ class DesignPatternMapper {
     }
     
     static func toEntity(from pattern: DesignPattern, context: NSManagedObjectContext) -> DesignPatternEntity {
-        let entity = DesignPatternEntity(context: context)
-        entity.id = pattern.id
-        entity.name = pattern.name
-        entity.type = pattern.type.rawValue
-        entity.patternDescription = pattern.patternDescription
-        return entity
+        var newEntity: DesignPatternEntity!
+        context.performAndWait {
+            let entity = DesignPatternEntity(context: context)
+            entity.id                = pattern.id
+            entity.name              = pattern.name
+            entity.type              = pattern.type.rawValue
+            entity.patternDescription = pattern.patternDescription
+            newEntity = entity
+        }
+        return newEntity
     }
 }

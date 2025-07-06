@@ -23,10 +23,14 @@ class CodeExampleMapper {
         designPattern: DesignPatternEntity,
         context: NSManagedObjectContext
     ) -> CodeExampleEntity {
-        let entity = CodeExampleEntity(context: context)
-        entity.id = example.id
-        entity.code = example.code
-        entity.designPatternRelationship = designPattern
-        return entity
+        var newEntity: CodeExampleEntity!
+        context.performAndWait {
+            let entity = CodeExampleEntity(context: context)
+            entity.id = example.id
+            entity.code = example.code
+            entity.designPatternRelationship = designPattern
+            newEntity = entity
+        }
+        return newEntity
     }
 }

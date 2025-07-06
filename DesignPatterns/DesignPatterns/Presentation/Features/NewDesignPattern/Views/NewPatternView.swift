@@ -11,6 +11,7 @@ struct NewPatternView: View {
     // MARK: - Properties
     @StateObject var viewModel: NewPatternViewModel
     @Binding var isPresented: Bool
+    let onPatternAdd: () -> Void
     
     // MARK: - Computed Properties
     private var currentStep: Int {
@@ -25,9 +26,27 @@ struct NewPatternView: View {
         / Double(DesignPatternCreationStep.allCases.count - 1)
     }
     
-    init(viewModel: NewPatternViewModel, isPresented: Binding<Bool>) {
+    private var isMainButtonLoading: Bool {
+        if case .loading = viewModel.addPatternState {
+            return isLastStep
+        } else {
+            return false
+        }
+    }
+    
+    private var isLastStep: Bool {
+        viewModel.creationStep == .confirm
+    }
+    
+    // MARK: - Initializer
+    init(
+        viewModel: NewPatternViewModel,
+        isPresented: Binding<Bool>,
+        onPatternAdd: @escaping () -> Void
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._isPresented = isPresented
+        self.onPatternAdd = onPatternAdd
     }
     
     // MARK: - Body
@@ -37,7 +56,6 @@ struct NewPatternView: View {
             progressSeparatorBar
             contentView
                 .padding(.bottom)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -74,25 +92,75 @@ struct NewPatternView: View {
     
     @ViewBuilder
     private var contentView: some View {
-        switch viewModel.creationStep {
-        case .name:
-            NewPatternNameInputView(viewModel: viewModel)
+        VStack(spacing: 16) {
+            switch viewModel.creationStep {
+            case .name:
+                NewPatternNameInputView(viewModel: viewModel)
+                    .padding(.horizontal)
+            case .type:
+                NewPatternChooseTypeView(viewModel: viewModel)
+                    .padding(.horizontal)
+            case .description:
+                NewPatternDescriptionInputView(viewModel: viewModel)
+                    .padding(.horizontal)
+            case .codeExamples:
+                NewPatternCodeExamplesView(viewModel: viewModel)
+            case .confirm:
+                NewPatternConfirmView(viewModel: viewModel)
+            }
+            
+            buttonsView
                 .padding(.horizontal)
-        case .type:
-            NewPatternChooseTypeView(viewModel: viewModel)
-                .padding(.horizontal)
-        case .description:
-            NewPatternDescriptionInputView(viewModel: viewModel)
-                .padding(.horizontal)
-        case .codeExamples:
-            NewPatternCodeExamplesView(viewModel: viewModel)
-        case .confirm:
-            EmptyView()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private var buttonsView: some View {
+        HStack(spacing: 8) {
+            if viewModel.creationStep != .name {
+                MainButtonView(colour: .primary.opacity(0.2), action: viewModel.previousStep) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.left")
+                            .fontWeight(.bold)
+                        Text("Back")
+                            .font(.system(size: 14, weight: .bold))
+                            .fontWidth(.expanded)
+                    }
+                }
+            }
+            
+            MainButtonView(
+                isDisabled: Binding(
+                    get: { viewModel.continueButtonDisabled },
+                    set: { _ in }
+                ),
+                isLoading: Binding(
+                    get: { isMainButtonLoading },
+                    set: { _ in }
+                ),
+                colour: isLastStep ? .greenAccent : .blueAccent,
+                action: nextStep
+            ) {
+                HStack(spacing: 8) {
+                    Text(isLastStep ? "Save" : "Continue")
+                        .font(.system(size: 14, weight: .bold))
+                        .fontWidth(.expanded)
+                    Image(systemName: isLastStep ? "checkmark" : "arrow.right")
+                        .fontWeight(.bold)
+                }
+            }
+        }
+    }
+    
+    private func nextStep() {
+        viewModel.nextStep {
+            isPresented = !isLastStep
+            onPatternAdd()
         }
     }
 }
 
 // MARK: - Preview
 #Preview {
-    NewPatternView(viewModel: ViewModelFactory.makeNewPatternViewModel(), isPresented: .constant(true))
+    NewPatternView(viewModel: ViewModelFactory.makeNewPatternViewModel(), isPresented: .constant(true)) { }
 }

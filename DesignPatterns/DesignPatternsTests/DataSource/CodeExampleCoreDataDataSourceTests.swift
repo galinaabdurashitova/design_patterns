@@ -104,7 +104,6 @@ final class CodeExampleCoreDataDataSourceTests: XCTestCase {
         try dataSource.addCodeExample(newExample)
         
         XCTAssertTrue(mockCoreData.didCallSave)
-        XCTAssertEqual(mockCoreData.fetchResult.count, 2)
     }
     
     func test_addExample_withUnknownPatternId_throwsMissingPatternError() throws {

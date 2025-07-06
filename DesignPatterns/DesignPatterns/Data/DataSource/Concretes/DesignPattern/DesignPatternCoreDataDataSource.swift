@@ -28,7 +28,7 @@ class DesignPatternCoreDataDataSource: DesignPatternDataSourceProtocol {
     }
 
     func addPattern(_ pattern: DesignPattern) throws {
-        _ = DesignPatternMapper.toEntity(from: pattern, context: coreData.create(DesignPatternEntity.self).managedObjectContext!)
+        _ = DesignPatternMapper.toEntity(from: pattern, context: coreData.context)
         try coreData.saveIfNeeded()
     }
 
@@ -38,6 +38,11 @@ class DesignPatternCoreDataDataSource: DesignPatternDataSourceProtocol {
         entity.patternDescription = pattern.patternDescription
         entity.type = pattern.type.rawValue
         try coreData.saveIfNeeded()
+    }
+    
+    func deletePattern(_ id: UUID) throws {
+        let entity = try fetchDesignPatternEntity(with: id)
+        try coreData.delete(entity)
     }
     
     // MARK: - Private functions

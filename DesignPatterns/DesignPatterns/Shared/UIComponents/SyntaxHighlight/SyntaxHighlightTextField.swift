@@ -9,7 +9,7 @@ import SwiftUI
 import TreeSitterSwiftRunestone
 import Runestone
 
-struct SyntaxHighlightTextView: UIViewRepresentable {
+struct SyntaxHighlightTextField: UIViewRepresentable {
     @Binding var text: String
     
     func makeUIView(context: Context) -> TextView {
@@ -48,9 +48,9 @@ struct SyntaxHighlightTextView: UIViewRepresentable {
     }
     
     class Coordinator: NSObject, TextViewDelegate {
-        var parent: SyntaxHighlightTextView
+        var parent: SyntaxHighlightTextField
 
-        init(_ parent: SyntaxHighlightTextView) {
+        init(_ parent: SyntaxHighlightTextField) {
             self.parent = parent
         }
 
@@ -61,7 +61,7 @@ struct SyntaxHighlightTextView: UIViewRepresentable {
 }
 
 #Preview {
-    SyntaxHighlightTextView(text: .constant("""
+    SyntaxHighlightTextField(text: .constant("""
             func textViewDidChange(_ textView: UITextView) {
                 parent.text = textView.text
             }
