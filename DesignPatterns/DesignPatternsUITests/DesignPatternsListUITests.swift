@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class DesignPatternsUITests: XCTestCase {
+final class DesignPatternsListUITests: XCTestCase {
     var app: XCUIApplication!
     
     override func setUpWithError() throws {

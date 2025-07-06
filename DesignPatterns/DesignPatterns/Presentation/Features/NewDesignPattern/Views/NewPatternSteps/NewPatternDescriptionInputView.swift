@@ -30,6 +30,7 @@ struct NewPatternDescriptionInputView<ViewModel: NewPatternViewModelProtocol>: V
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(Color(.systemGray), lineWidth: 1)
             )
+            .accessibilityIdentifier("addPatternDescriptionTextField")
         }
         .onDisappear {
             isFocused = false

@@ -68,10 +68,12 @@ struct NewPatternView<ViewModel: NewPatternViewModelProtocol>: View {
                 Image(systemName: "xmark")
                     .foregroundColor(.primary)
             }
+            .accessibilityIdentifier("closeSheetButton")
             
             Text("Add new design pattern \(currentStep+1)/\(DesignPatternCreationStep.allCases.count)")
                 .fontWidth(.expanded)
                 .frame(maxWidth: .infinity)
+                .accessibilityIdentifier("addPatternTitle")
         }
         .padding(.horizontal)
         .padding(.top)
@@ -128,6 +130,7 @@ struct NewPatternView<ViewModel: NewPatternViewModelProtocol>: View {
                             .fontWidth(.expanded)
                     }
                 }
+                .accessibilityIdentifier("previousStepButton")
             }
             
             MainButtonView(
@@ -150,6 +153,7 @@ struct NewPatternView<ViewModel: NewPatternViewModelProtocol>: View {
                         .fontWeight(.bold)
                 }
             }
+            .accessibilityIdentifier("nextStepButton")
         }
     }
     

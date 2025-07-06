@@ -49,14 +49,18 @@ struct NewPatternCodeExamplesView<ViewModel: NewPatternViewModelProtocol>: View 
                     .frame(minHeight: 120, alignment: .topLeading)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
-                    .highlightAndShake(isShaking: Binding<Bool>(
-                        get: { isShaking && viewModel.codeExamples[exampleIndex].isEmpty },
-                        set: { value in isShaking = value }
-                    ))
+                    .highlightAndShake(
+                        isShaking: Binding<Bool>(
+                            get: { isShaking && viewModel.codeExamples[exampleIndex].isEmpty },
+                            set: { value in isShaking = value }
+                        )
+                    )
+                    .accessibilityIdentifier("addPatternCodeExampleTextField-\(exampleIndex)")
                     
                     if viewModel.codeExamples.count > 1 || !example.isEmpty {
                         deleteOptionButton(index: exampleIndex)
                             .padding([.top, .trailing], -8)
+                            .accessibilityIdentifier("addPatternCodeExampleDeleteExample-\(exampleIndex)")
                     }
                 }
             }
@@ -78,6 +82,7 @@ struct NewPatternCodeExamplesView<ViewModel: NewPatternViewModelProtocol>: View 
                     .foregroundColor(.primary)
             }
         }
+        .accessibilityIdentifier("addPatternCodeExampleButton")
     }
     
     private func deleteOptionButton(index: Int) -> some View {

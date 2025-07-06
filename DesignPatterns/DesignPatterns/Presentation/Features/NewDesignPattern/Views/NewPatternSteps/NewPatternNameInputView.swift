@@ -25,8 +25,10 @@ struct NewPatternNameInputView<ViewModel: NewPatternViewModelProtocol>: View {
                 HStack {
                     TextField("Design Pattern Name", text: $viewModel.name)
                         .focused($isFocused)
+                        .accessibilityIdentifier("addPatternNameTextField")
                     
                     checkIcon
+                        .accessibilityIdentifier("addPatternNameCheckIcon")
                 }
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)

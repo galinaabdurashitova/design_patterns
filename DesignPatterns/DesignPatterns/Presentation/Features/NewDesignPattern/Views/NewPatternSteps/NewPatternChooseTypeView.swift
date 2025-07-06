@@ -18,6 +18,7 @@ struct NewPatternChooseTypeView<ViewModel: NewPatternViewModelProtocol>: View {
             
             ForEach(DesignPatternType.allCases, id: \.self) { type in
                 typeOptionView(type)
+                    .accessibilityIdentifier("addPatternType-\(type.rawValue)")
             }
         }
     }

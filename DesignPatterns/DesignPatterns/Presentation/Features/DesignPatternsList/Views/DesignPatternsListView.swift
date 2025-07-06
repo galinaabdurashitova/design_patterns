@@ -131,6 +131,7 @@ struct DesignPatternsListView<ViewModel: DesignPatternsListViewModelProtocol>: V
                     Circle().fill(.greenAccent)
                 )
         }
+        .accessibilityIdentifier("addPatternButton")
     }
     
     // MARK: - Methods
