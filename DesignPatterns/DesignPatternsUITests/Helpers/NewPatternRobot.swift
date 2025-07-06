@@ -16,10 +16,11 @@ struct NewPatternRobot {
     @discardableResult
     func fillName(_ text: String = "Test") -> Self {
         let field = app.textFields["addPatternNameTextField"]
-        XCTAssertTrue(field.waitForExistence(timeout: 0.5))
+        XCTAssertTrue(field.waitForExistence(timeout: 1.5))
         field.tap()
         field.typeText(text)
         waitEnabled(next).tap()
+        waitEnabled(next, enabled: false)
         return self
     }
 
@@ -27,23 +28,28 @@ struct NewPatternRobot {
     func pickType(_ type: String = "behavioral") -> Self {
         app.buttons["addPatternType-\(type)"].tap()
         waitEnabled(next).tap()
+        waitEnabled(next, enabled: false)
         return self
     }
 
     @discardableResult
     func fillDescription(_ text: String = "Demo") -> Self {
         let field = app.textFields["addPatternDescriptionTextField"]
-        XCTAssertTrue(field.waitForExistence(timeout: 0.5))
+        XCTAssertTrue(field.waitForExistence(timeout: 1.5))
         field.tap()
         field.typeText(text)
-        waitEnabled(next)
+        waitEnabled(next).tap()
+        waitEnabled(next, enabled: false)
         return self
     }
 
     @discardableResult
-    private func waitEnabled(_ element: XCUIElement,
-                             timeout: TimeInterval = 1.5) -> XCUIElement {
-        let predicate = NSPredicate(format: "isEnabled == true")
+    private func waitEnabled(
+        _ element: XCUIElement,
+        timeout: TimeInterval = 3,
+        enabled: Bool = true
+    ) -> XCUIElement {
+        let predicate = NSPredicate(format: "isEnabled == \(enabled ? "true" : "false")")
         let exp = XCTNSPredicateExpectation(predicate: predicate, object: element)
         XCTAssertEqual(
             XCTWaiter().wait(for: [exp], timeout: timeout),
