@@ -8,8 +8,25 @@
 import Foundation
 import Combine
 
+protocol NewPatternViewModelProtocol: ObservableObject {
+    @MainActor var creationStep: DesignPatternCreationStep { get set }
+    @MainActor var name: String { get set }
+    @MainActor var nameCheckState: UIState<Bool> { get set }
+    @MainActor var selectedType: DesignPatternType? { get set }
+    @MainActor var description: String { get set }
+    @MainActor var codeExamples: [String] { get set }
+    @MainActor var patternBuilder: DesignPattern.Builder { get set }
+    @MainActor var addPatternState: UIState<Bool> { get set }
+    @MainActor var continueButtonDisabled: Bool { get }
+    @MainActor func previousStep()
+    @MainActor func nextStep(onAddFinished: @escaping () -> Void)
+    @MainActor func addOption(onAddRestricted: @escaping () -> Void)
+    @MainActor func deleteOption(index: Int)
+    @MainActor func addPattern(onAddFinished: @escaping () -> Void)
+}
+
 @MainActor
-class NewPatternViewModel: ObservableObject {
+class NewPatternViewModel: NewPatternViewModelProtocol, ObservableObject {
     // Steps
     @Published var creationStep: DesignPatternCreationStep = .name
     

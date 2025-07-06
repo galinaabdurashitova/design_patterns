@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct NewPatternChooseTypeView: View {
-    @ObservedObject var viewModel: NewPatternViewModel
+struct NewPatternChooseTypeView<ViewModel: NewPatternViewModelProtocol>: View {
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         VStack(spacing: 12) {

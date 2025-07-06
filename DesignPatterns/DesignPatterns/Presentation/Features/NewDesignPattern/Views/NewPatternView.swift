@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct NewPatternView: View {
+struct NewPatternView<ViewModel: NewPatternViewModelProtocol>: View {
     // MARK: - Properties
-    @StateObject var viewModel: NewPatternViewModel
+    @StateObject var viewModel: ViewModel
     @Binding var isPresented: Bool
     let onPatternAdd: () -> Void
     
@@ -40,7 +40,7 @@ struct NewPatternView: View {
     
     // MARK: - Initializer
     init(
-        viewModel: NewPatternViewModel,
+        viewModel: ViewModel,
         isPresented: Binding<Bool>,
         onPatternAdd: @escaping () -> Void
     ) {

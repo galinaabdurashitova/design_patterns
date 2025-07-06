@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct NewPatternNameInputView: View {
-    @ObservedObject var viewModel: NewPatternViewModel
+struct NewPatternNameInputView<ViewModel: NewPatternViewModelProtocol>: View {
+    @ObservedObject var viewModel: ViewModel
     @FocusState var isFocused
     
     var body: some View {

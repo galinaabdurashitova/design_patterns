@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct NewPatternConfirmView: View {
-    @ObservedObject var viewModel: NewPatternViewModel
+struct NewPatternConfirmView<ViewModel: NewPatternViewModelProtocol>: View {
+    @ObservedObject var viewModel: ViewModel
     
     @State private var isShowingAllCodeExamples: Bool = false
     

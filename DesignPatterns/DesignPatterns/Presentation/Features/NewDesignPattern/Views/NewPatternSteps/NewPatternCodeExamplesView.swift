@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct NewPatternCodeExamplesView: View {
-    @ObservedObject var viewModel: NewPatternViewModel
+struct NewPatternCodeExamplesView<ViewModel: NewPatternViewModelProtocol>: View {
+    @ObservedObject var viewModel: ViewModel
     @FocusState var focusedField: Int?
     
     @State private var isShaking: Bool = false
