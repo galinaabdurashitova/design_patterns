@@ -58,6 +58,7 @@ struct NewPatternView: View {
                 .padding(.bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.creationStep)
     }
     
     // MARK: - Subviews

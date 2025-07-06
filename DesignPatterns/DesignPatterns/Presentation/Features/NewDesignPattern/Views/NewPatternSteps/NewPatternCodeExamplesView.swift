@@ -24,6 +24,7 @@ struct NewPatternCodeExamplesView: View {
             }
             .padding(.horizontal)
         }
+        .animation(.easeInOut(duration: 0.2), value: viewModel.codeExamples)
         .onTapGesture {
             focusedField = nil
         }

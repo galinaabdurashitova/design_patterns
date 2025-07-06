@@ -7,7 +7,6 @@
 
 import Foundation
 import Combine
-import SwiftUI
 
 @MainActor
 class NewPatternViewModel: ObservableObject {
@@ -63,7 +62,7 @@ class NewPatternViewModel: ObservableObject {
     }
     
     func previousStep() {
-        withAnimation(.easeInOut(duration: 0.2)) { creationStep = creationStep.previous }
+        creationStep = creationStep.previous
     }
     
     func nextStep(onAddFinished: @escaping () -> Void) {
@@ -80,7 +79,7 @@ class NewPatternViewModel: ObservableObject {
         case .confirm:
             addPattern(onAddFinished: onAddFinished)
         }
-        withAnimation(.easeInOut(duration: 0.2)) { creationStep = creationStep.next }
+        creationStep = creationStep.next
     }
     
     // MARK: - Name validation
@@ -121,12 +120,10 @@ class NewPatternViewModel: ObservableObject {
     }
     
     func deleteOption(index: Int) {
-        withAnimation(.easeInOut(duration: 0.2)) {
-            if codeExamples.count > 1 {
-                codeExamples.remove(at: index)
-            } else {
-                codeExamples[0] = ""
-            }
+        if codeExamples.count > 1 {
+            codeExamples.remove(at: index)
+        } else {
+            codeExamples[0] = ""
         }
     }
     

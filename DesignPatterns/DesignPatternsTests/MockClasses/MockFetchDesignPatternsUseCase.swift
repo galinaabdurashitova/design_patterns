@@ -9,7 +9,7 @@ import Foundation
 @testable import DesignPatterns
 
 class MockFetchDesignPatternsUseCase: FetchDesignPatternsUseCaseProtocol {
-    var patterns = MockDesignPatterns.patterns
+    var patterns = TestDesignPatterns.patterns
     var throwError: Bool = false
     
     func getPatterns() throws -> [DesignPattern] {
