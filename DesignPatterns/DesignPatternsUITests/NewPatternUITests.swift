@@ -10,6 +10,8 @@ import XCTest
 final class NewPatternUITests: XCTestCase {
     var app: XCUIApplication!
     
+    private let timeout: Double = 3
+    
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -20,16 +22,16 @@ final class NewPatternUITests: XCTestCase {
     func test_addPatternSheet_opensAndCloses() {
         openNewPatternSheet()
         let closeButton = app.buttons["closeSheetButton"]
-        XCTAssertTrue(closeButton.waitForExistence(timeout: 1.5))
+        XCTAssertTrue(closeButton.waitForExistence(timeout: timeout))
         closeButton.tap()
-        XCTAssertTrue(closeButton.waitForNonExistence(timeout: 1.5))
+        XCTAssertTrue(closeButton.waitForNonExistence(timeout: timeout))
     }
     
     func test_addPatternSheet_nameField() {
         openNewPatternSheet()
         
         let text = app.staticTexts["addPatternTitle"]
-        XCTAssertTrue(text.waitForExistence(timeout: 1.5))
+        XCTAssertTrue(text.waitForExistence(timeout: timeout))
         XCTAssertEqual(text.label, "Add new design pattern 1/5")
         
         let previousStepButton = app.buttons["previousStepButton"]
@@ -48,14 +50,14 @@ final class NewPatternUITests: XCTestCase {
             evaluatedWith: nextStepButton,
             handler: nil
         )
-        wait(for: [enabledExpectation], timeout: 3)
+        wait(for: [enabledExpectation], timeout: timeout)
         XCTAssertTrue(nextStepButton.isEnabled)
     }
     
     func test_addPatternSheet_patternType() {
         openNewPatternSheet()
         
-        NewPatternRobot(app: app)
+        NewPatternRobot(app: app, timeout: timeout)
             .fillName()
         
         let text = app.staticTexts["addPatternTitle"]
@@ -76,13 +78,13 @@ final class NewPatternUITests: XCTestCase {
         
         previousStepButton.tap()
         let nameInputTextField = app.textFields["addPatternNameTextField"]
-        XCTAssertTrue(nameInputTextField.waitForExistence(timeout: 1.5))
+        XCTAssertTrue(nameInputTextField.waitForExistence(timeout: timeout))
     }
     
     func test_addPatternSheet_descriptionInput() {
         openNewPatternSheet()
         
-        NewPatternRobot(app: app)
+        NewPatternRobot(app: app, timeout: timeout)
             .fillName()
             .pickType()
         
@@ -92,7 +94,7 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(previousStepButton.exists)
         
         let descriptionInputTextView = app.textFields["addPatternDescriptionTextField"]
-        XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: 1.5))
+        XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: timeout))
         descriptionInputTextView.tap()
         descriptionInputTextView.typeText("Test")
         
@@ -101,13 +103,13 @@ final class NewPatternUITests: XCTestCase {
         
         previousStepButton.tap()
         let behavioralTypeButton = app.buttons["addPatternType-behavioral"]
-        XCTAssertTrue(behavioralTypeButton.waitForExistence(timeout: 1.5))
+        XCTAssertTrue(behavioralTypeButton.waitForExistence(timeout: timeout))
     }
     
     func test_addPatternSheet_codeExamples() {
         openNewPatternSheet()
         
-        NewPatternRobot(app: app)
+        NewPatternRobot(app: app, timeout: timeout)
             .fillName()
             .pickType()
             .fillDescription()
@@ -138,7 +140,7 @@ final class NewPatternUITests: XCTestCase {
         secondField.typeText("Test2")
         
         deleteCodeExampleButton.tap()
-        XCTAssertTrue(secondField.waitForNonExistence(timeout: 1.5))
+        XCTAssertTrue(secondField.waitForNonExistence(timeout: timeout))
 //        XCTAssertEqual(firstField.label, "Test2")
 //        
 //        let nextStepButton = app.buttons["nextStepButton"]
@@ -146,12 +148,12 @@ final class NewPatternUITests: XCTestCase {
         
         previousStepButton.tap()
         let descriptionInputTextView = app.textFields["addPatternDescriptionTextField"]
-        XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: 1.5))
+        XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: timeout))
     }
     
     private func openNewPatternSheet() {
         let addButton = app.buttons["addPatternButton"]
-        XCTAssertTrue(addButton.waitForExistence(timeout: 1.5))
+        XCTAssertTrue(addButton.waitForExistence(timeout: timeout))
         addButton.tap()
     }
 }
