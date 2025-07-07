@@ -10,12 +10,12 @@ import XCTest
 final class NewPatternUITests: XCTestCase {
     var app: XCUIApplication!
     
-    private let timeout: Double = 3
+    private let timeout: Double = 10
     
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchArguments.append("--UITests")
+        app.launchArguments += ["--UITests", "-disableAnimations"]
         app.launch()
     }
     

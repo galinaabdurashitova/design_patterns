@@ -6,9 +6,18 @@
 //
 
 import SwiftUI
+import UIKit
 
 @main
 struct DesignPatternsApp: App {
+    init() {
+        #if canImport(UIKit)
+        if ProcessInfo.processInfo.arguments.contains("-disableAnimations") {
+            UIView.setAnimationsEnabled(false)
+        }
+        #endif
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
