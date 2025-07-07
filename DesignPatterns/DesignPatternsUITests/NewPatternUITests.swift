@@ -12,6 +12,9 @@ final class NewPatternUITests: XCTestCase {
     
     private let timeout: Double = 10
     
+    private var next: XCUIElement      { app.buttons["nextStepButton"] }
+    private var prev: XCUIElement      { app.buttons["previousStepButton"] }
+    
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -29,29 +32,16 @@ final class NewPatternUITests: XCTestCase {
     
     func test_addPatternSheet_nameField() {
         openNewPatternSheet()
+        checkStepAtStart(stepN: 1)
         
-        let text = app.staticTexts["addPatternTitle"]
-        XCTAssertTrue(text.waitForExistence(timeout: timeout))
-        XCTAssertEqual(text.label, "Add new design pattern 1/5")
-        
-        let previousStepButton = app.buttons["previousStepButton"]
-        XCTAssertFalse(previousStepButton.exists)
-        let nextStepButton = app.buttons["nextStepButton"]
-        XCTAssertTrue(nextStepButton.exists)
-        XCTAssertFalse(nextStepButton.isEnabled)
+        XCTAssertTrue(next.exists)
+        XCTAssertFalse(next.isEnabled)
         
         let nameInputTextField = app.textFields["addPatternNameTextField"]
         XCTAssertTrue(nameInputTextField.exists)
         nameInputTextField.tap()
         nameInputTextField.typeText("Test")
-        let enabledPredicate = NSPredicate(format: "isEnabled == true")
-        let enabledExpectation = expectation(
-            for: enabledPredicate,
-            evaluatedWith: nextStepButton,
-            handler: nil
-        )
-        wait(for: [enabledExpectation], timeout: timeout)
-        XCTAssertTrue(nextStepButton.isEnabled)
+        waitForNextStepButtonEnabled()
     }
     
     func test_addPatternSheet_patternType() {
@@ -60,10 +50,7 @@ final class NewPatternUITests: XCTestCase {
         NewPatternRobot(app: app, timeout: timeout)
             .fillName()
         
-        let text = app.staticTexts["addPatternTitle"]
-        XCTAssertEqual(text.label, "Add new design pattern 2/5")
-        let previousStepButton = app.buttons["previousStepButton"]
-        XCTAssertTrue(previousStepButton.exists)
+        checkStepAtStart(stepN: 2)
         
         let creationalTypeButton = app.buttons["addPatternType-creational"]
         XCTAssertTrue(creationalTypeButton.exists)
@@ -72,11 +59,9 @@ final class NewPatternUITests: XCTestCase {
         let behavioralTypeButton = app.buttons["addPatternType-behavioral"]
         XCTAssertTrue(behavioralTypeButton.exists)
         behavioralTypeButton.tap()
+        waitForNextStepButtonEnabled()
         
-        let nextStepButton = app.buttons["nextStepButton"]
-        XCTAssertTrue(nextStepButton.isEnabled)
-        
-        previousStepButton.tap()
+        prev.tap()
         let nameInputTextField = app.textFields["addPatternNameTextField"]
         XCTAssertTrue(nameInputTextField.waitForExistence(timeout: timeout))
     }
@@ -88,20 +73,15 @@ final class NewPatternUITests: XCTestCase {
             .fillName()
             .pickType()
         
-        let text = app.staticTexts["addPatternTitle"]
-        XCTAssertEqual(text.label, "Add new design pattern 3/5")
-        let previousStepButton = app.buttons["previousStepButton"]
-        XCTAssertTrue(previousStepButton.exists)
+        checkStepAtStart(stepN: 3)
         
         let descriptionInputTextView = app.textFields["addPatternDescriptionTextField"]
         XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: timeout))
         descriptionInputTextView.tap()
         descriptionInputTextView.typeText("Test")
+        waitForNextStepButtonEnabled()
         
-        let nextStepButton = app.buttons["nextStepButton"]
-        XCTAssertTrue(nextStepButton.isEnabled)
-        
-        previousStepButton.tap()
+        prev.tap()
         let behavioralTypeButton = app.buttons["addPatternType-behavioral"]
         XCTAssertTrue(behavioralTypeButton.waitForExistence(timeout: timeout))
     }
@@ -114,10 +94,7 @@ final class NewPatternUITests: XCTestCase {
             .pickType()
             .fillDescription()
         
-        let text = app.staticTexts["addPatternTitle"]
-        XCTAssertEqual(text.label, "Add new design pattern 4/5")
-        let previousStepButton = app.buttons["previousStepButton"]
-        XCTAssertTrue(previousStepButton.exists)
+        checkStepAtStart(stepN: 4)
         
         let codeExamplesFields = app.textViews
         XCTAssertEqual(codeExamplesFields.count, 1)
@@ -146,7 +123,7 @@ final class NewPatternUITests: XCTestCase {
 //        let nextStepButton = app.buttons["nextStepButton"]
 //        XCTAssertTrue(nextStepButton.isEnabled)
         
-        previousStepButton.tap()
+        prev.tap()
         let descriptionInputTextView = app.textFields["addPatternDescriptionTextField"]
         XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: timeout))
     }
@@ -155,5 +132,24 @@ final class NewPatternUITests: XCTestCase {
         let addButton = app.buttons["addPatternButton"]
         XCTAssertTrue(addButton.waitForExistence(timeout: timeout))
         addButton.tap()
+    }
+    
+    private func waitForNextStepButtonEnabled() {
+        let enabledPredicate = NSPredicate(format: "isEnabled == true")
+        let enabledExpectation = expectation(
+            for: enabledPredicate,
+            evaluatedWith: next,
+            handler: nil
+        )
+        wait(for: [enabledExpectation], timeout: timeout)
+        XCTAssertTrue(next.isEnabled)
+    }
+    
+    private func checkStepAtStart(stepN: Int) {
+        let text = app.staticTexts["addPatternTitle"]
+        XCTAssertTrue(text.waitForExistence(timeout: timeout))
+        XCTAssertEqual(text.label, "Add new design pattern \(stepN)/5")
+        
+        XCTAssertTrue(stepN == 1 ? !prev.exists : prev.exists)
     }
 }
