@@ -12,10 +12,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Xcode version
+      - name: Select Xcode 16.4
         run: sudo xcode-select -s /Applications/Xcode_16.4.app
+        
+      - name: Boot simulator once
+        run: |
+          xcrun simctl boot "iPhone 16 Pro" || true
 
-      - name: Build once for all tests
+      - name: Build for testing
         run: |
           xcodebuild build-for-testing \
             -project DesignPatterns/DesignPatterns.xcodeproj \
@@ -28,7 +32,9 @@ jobs:
             -project DesignPatterns/DesignPatterns.xcodeproj \
             -scheme DesignPatterns \
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
-            -only-testing:DesignPatternsTests
+            -only-testing:DesignPatternsTests \
+            -parallel-testing-enabled YES \
+            -maximum-concurrent-test-simulator-destinations 2
 
       - name: Run Snapshot Tests
         run: |
@@ -36,7 +42,9 @@ jobs:
             -project DesignPatterns/DesignPatterns.xcodeproj \
             -scheme DesignPatterns \
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
-            -only-testing:DesignPatternsSnapshotTests
+            -only-testing:DesignPatternsSnapshotTests \
+            -parallel-testing-enabled NO \
+            -maximum-concurrent-test-simulator-destinations 1
 
       - name: Run UI Tests
         run: |
@@ -44,4 +52,6 @@ jobs:
             -project DesignPatterns/DesignPatterns.xcodeproj \
             -scheme DesignPatterns \
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
-            -only-testing:DesignPatternsUITests
+            -only-testing:DesignPatternsUITests \
+            -parallel-testing-enabled NO \
+            -maximum-concurrent-test-simulator-destinations 1
