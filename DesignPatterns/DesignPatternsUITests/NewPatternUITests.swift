@@ -30,7 +30,7 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(closeButton.waitForNonExistence(timeout: timeout))
     }
     
-    func test_addPatternSheet_nameField() {
+    func test_addPatternSheet_nameInputStep() {
         openNewPatternSheet()
         checkStepAtStart(stepN: 1)
         
@@ -44,7 +44,7 @@ final class NewPatternUITests: XCTestCase {
         waitForNextStepButtonEnabled()
     }
     
-    func test_addPatternSheet_patternType() {
+    func test_addPatternSheet_patternTypeStep() {
         openNewPatternSheet()
         
         NewPatternRobot(app: app, timeout: timeout)
@@ -66,7 +66,7 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(nameInputTextField.waitForExistence(timeout: timeout))
     }
     
-    func test_addPatternSheet_descriptionInput() {
+    func test_addPatternSheet_descriptionInputStep() {
         openNewPatternSheet()
         
         NewPatternRobot(app: app, timeout: timeout)
@@ -86,7 +86,7 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(behavioralTypeButton.waitForExistence(timeout: timeout))
     }
     
-    func test_addPatternSheet_codeExamples() {
+    func test_addPatternSheet_codeExamplesStep() {
         openNewPatternSheet()
         
         NewPatternRobot(app: app, timeout: timeout)
@@ -118,16 +118,108 @@ final class NewPatternUITests: XCTestCase {
         
         deleteCodeExampleButton.tap()
         XCTAssertTrue(secondField.waitForNonExistence(timeout: timeout))
-//        XCTAssertEqual(firstField.label, "Test2")
-//        
-//        let nextStepButton = app.buttons["nextStepButton"]
-//        XCTAssertTrue(nextStepButton.isEnabled)
+        
+        let textField = firstField.textViews.firstMatch
+        XCTAssertEqual(textField.value as? String, "Test2")
+        waitForNextStepButtonEnabled()
         
         prev.tap()
         let descriptionInputTextView = app.textFields["addPatternDescriptionTextField"]
         XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: timeout))
     }
     
+    func test_addPatternSheet_confirmView_when3AndLessCodeExamples() {
+        openNewPatternSheet()
+        
+        let testName = "Test name"
+        let testType = "behavioral"
+        let testDescription = "Test description"
+        let testCodeExamples = ["Code example 1", "Code example 2"]
+        
+        NewPatternRobot(app: app, timeout: timeout)
+            .fillName(testName)
+            .pickType(testType)
+            .fillDescription(testDescription)
+            .addCodeExamples(testCodeExamples)
+        
+        checkStepAtStart(stepN: 5)
+        
+        let nameTextField = app.staticTexts["addPatternConfirmField-Name"]
+        XCTAssertEqual(nameTextField.label, testName)
+        let typeTextField = app.staticTexts["addPatternConfirmField-Type"]
+        XCTAssertTrue(typeTextField.label.lowercased().contains(testType))
+        let descriptionTextField = app.staticTexts["addPatternConfirmField-Description"]
+        XCTAssertEqual(descriptionTextField.label, testDescription)
+        for i in testCodeExamples.indices {
+            let codeExampleTextFiled = app.scrollViews["addPatternConfirmField-codeExample-\(i)"]
+            let textField = codeExampleTextFiled.textViews.firstMatch
+            XCTAssertEqual(textField.value as? String, testCodeExamples[i])
+        }
+    }
+    
+    func test_addPatternSheet_confirmView_whenMoreThan3CodeExamples() {
+        openNewPatternSheet()
+        
+        let testCodeExamples = ["Code example 1", "Code example 2", "Code example 3", "Code example 4"]
+        
+        NewPatternRobot(app: app, timeout: timeout)
+            .fillName()
+            .pickType()
+            .fillDescription()
+            .addCodeExamples(testCodeExamples)
+        
+        for i in 0..<3 {
+            let codeExampleTextFiled = app.scrollViews["addPatternConfirmField-codeExample-\(i)"]
+            let textField = codeExampleTextFiled.textViews.firstMatch
+            XCTAssertEqual(textField.value as? String, testCodeExamples[i])
+        }
+        
+        let nextCodeField = app.scrollViews["addPatternConfirmField-codeExample-\(3)"]
+        XCTAssertFalse(nextCodeField.exists)
+        let button = app.buttons["addPatternConfirmField-codeExamplesExpandButton"]
+        XCTAssertTrue(button.exists)
+        button.tap()
+        XCTAssertTrue(nextCodeField.waitForExistence(timeout: timeout))
+        let textField = nextCodeField.textViews.firstMatch
+        XCTAssertEqual(textField.value as? String, testCodeExamples[3])
+        button.tap()
+        XCTAssertTrue(nextCodeField.waitForNonExistence(timeout: timeout))
+    }
+    
+    func test_addPatternSheet_goBack() {
+        openNewPatternSheet()
+        NewPatternRobot(app: app, timeout: timeout)
+            .fillName()
+            .pickType()
+            .fillDescription()
+            .addCodeExamples()
+        prev.tap()
+        let codeExampleField = app.scrollViews["addPatternCodeExampleTextField-0"]
+        XCTAssertTrue(codeExampleField.waitForExistence(timeout: timeout))
+    }
+    
+    func test_addPatternSheet_saveNewPattern() {
+        let list = app.collectionViews["PatternsList"]
+        let patternsCount = list.cells.count
+        
+        openNewPatternSheet()
+        
+        NewPatternRobot(app: app, timeout: timeout)
+            .fillName()
+            .pickType()
+            .fillDescription()
+            .addCodeExamples()
+        
+        next.tap()
+        
+//        let closeButton = app.buttons["closeSheetButton"]
+//        print(app.debugDescription)
+//        XCTAssertTrue(closeButton.waitForNonExistence(timeout: timeout))
+//        
+//        XCTAssertEqual(list.cells.count, patternsCount+1)
+    }
+    
+    // MARK: Private helper methods
     private func openNewPatternSheet() {
         let addButton = app.buttons["addPatternButton"]
         XCTAssertTrue(addButton.waitForExistence(timeout: timeout))

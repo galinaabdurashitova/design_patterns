@@ -43,6 +43,19 @@ struct NewPatternRobot {
         waitEnabled(next, timeout: timeout, enabled: false)
         return self
     }
+    
+    @discardableResult
+    func addCodeExamples(_ codeExamples: [String] = ["Test", "Test2"]) -> Self {
+        for i in codeExamples.indices {
+            let field = app.scrollViews["addPatternCodeExampleTextField-\(i)"]
+            XCTAssertTrue(field.waitForExistence(timeout: timeout))
+            field.tap()
+            field.typeText(codeExamples[i])
+            app.buttons["addPatternCodeExampleButton"].tap()
+        }
+        waitEnabled(next, timeout: timeout).tap()
+        return self
+    }
 
     @discardableResult
     private func waitEnabled(

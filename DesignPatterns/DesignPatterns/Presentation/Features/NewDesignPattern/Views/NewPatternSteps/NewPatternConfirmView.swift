@@ -67,6 +67,7 @@ struct NewPatternConfirmView<ViewModel: NewPatternViewModelProtocol>: View {
                     .frame(maxWidth: .infinity)
                     .background(Color(.systemGray6))
                     .cornerRadius(8)
+                    .accessibilityIdentifier("addPatternConfirmField-codeExample-\(exampleIndex)")
             }
             
             if viewModel.codeExamples.count > 3 {
@@ -83,6 +84,7 @@ struct NewPatternConfirmView<ViewModel: NewPatternViewModelProtocol>: View {
                             .foregroundColor(.primary)
                     }
                 }
+                .accessibilityIdentifier("addPatternConfirmField-codeExamplesExpandButton")
             }
         }
     }
@@ -107,6 +109,7 @@ struct NewPatternConfirmView<ViewModel: NewPatternViewModelProtocol>: View {
                 .frame(maxWidth: .infinity)
                 .background(colour)
                 .cornerRadius(8)
+                .accessibilityIdentifier("addPatternConfirmField-\(caption)")
         }
     }
 }
