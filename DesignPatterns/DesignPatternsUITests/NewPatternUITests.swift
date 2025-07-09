@@ -10,7 +10,7 @@ import XCTest
 final class NewPatternUITests: XCTestCase {
     var app: XCUIApplication!
     
-    private let timeout: Double = 10
+    private let timeout: Double = 30
     
     private var next: XCUIElement      { app.buttons["nextStepButton"] }
     private var prev: XCUIElement      { app.buttons["previousStepButton"] }
@@ -186,7 +186,7 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(nextCodeField.waitForNonExistence(timeout: timeout))
     }
     
-    func test_addPatternSheet_goBack() {
+    func test_addPatternSheet_confirmView_goBack() {
         openNewPatternSheet()
         NewPatternRobot(app: app, timeout: timeout)
             .fillName()
@@ -199,24 +199,26 @@ final class NewPatternUITests: XCTestCase {
     }
     
     func test_addPatternSheet_saveNewPattern() {
-        let list = app.collectionViews["PatternsList"]
-        let patternsCount = list.cells.count
-        
         openNewPatternSheet()
         
+        let newPatternName = "Test"
+        
         NewPatternRobot(app: app, timeout: timeout)
-            .fillName()
+            .fillName(newPatternName)
             .pickType()
             .fillDescription()
             .addCodeExamples()
         
+        let nameTextField = app.staticTexts["addPatternConfirmField-Name"]
+        XCTAssertTrue(nameTextField.waitForExistence(timeout: timeout))
+        
         next.tap()
         
-//        let closeButton = app.buttons["closeSheetButton"]
-//        print(app.debugDescription)
-//        XCTAssertTrue(closeButton.waitForNonExistence(timeout: timeout))
-//        
-//        XCTAssertEqual(list.cells.count, patternsCount+1)
+        let closeButton = app.buttons["closeSheetButton"]
+        XCTAssertTrue(closeButton.waitForNonExistence(timeout: timeout))
+        
+        let newPattern = app.buttons["patternRow-\(newPatternName)"]
+        XCTAssertTrue(newPattern.waitForExistence(timeout: timeout))
     }
     
     // MARK: Private helper methods

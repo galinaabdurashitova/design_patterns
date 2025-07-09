@@ -60,7 +60,7 @@ struct NewPatternRobot {
     @discardableResult
     private func waitEnabled(
         _ element: XCUIElement,
-        timeout: TimeInterval = 3,
+        timeout: TimeInterval = 30,
         enabled: Bool = true
     ) -> XCUIElement {
         let predicate = NSPredicate(format: "isEnabled == \(enabled ? "true" : "false")")

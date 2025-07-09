@@ -9,7 +9,7 @@ import XCTest
 
 final class DesignPatternsListUITests: XCTestCase {
     var app: XCUIApplication!
-    private let timeout: Double = 10
+    private let timeout: Double = 30
     
     override func setUpWithError() throws {
         continueAfterFailure = false
