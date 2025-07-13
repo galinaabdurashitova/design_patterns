@@ -22,7 +22,9 @@ jobs:
       run: brew install fastlane
 
     - name: Take screenshots (fastlane snapshot)
-      run: fastlane snapshot --scheme FastlaneSnapshot
+      run: fastlane snapshot \
+           --scheme FastlaneSnapshot \
+           --project DesignPatterns/DesignPatterns.xcodeproj
       env:
         FASTLANE_SKIP_UPDATE_CHECK: true
 
