@@ -1,6 +1,6 @@
 # Uncomment the lines below you want to change by removing the # in the beginning
 
-project "./DesignPatterns.xcodeproj"
+project "./DesignPatterns/DesignPatterns.xcodeproj"
 
 # A list of devices you want to take the screenshots from
 devices([
