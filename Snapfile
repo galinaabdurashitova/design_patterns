@@ -4,7 +4,7 @@ project "./DesignPatterns/DesignPatterns.xcodeproj"
 
 # A list of devices you want to take the screenshots from
 devices([
-    "iPhone 16 Pro"
+    "iPhone 15 Pro"
 #   "iPhone 8",
 #   "iPhone 8 Plus",
 #   "iPhone SE",
