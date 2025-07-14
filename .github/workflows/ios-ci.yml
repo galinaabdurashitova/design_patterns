@@ -26,7 +26,7 @@ jobs:
         restore-keys: ${{ runner.os }}-spm-
 
     - name: Boot simulator once
-      run: xcrun simctl boot "iPhone 15 Pro" || true
+      run: xcrun simctl boot "iPhone 16 Pro" || true
 
     - name: Install fastlane
       run: brew install fastlane
