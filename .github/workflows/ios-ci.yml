@@ -7,6 +7,8 @@ on:
 jobs:
   build-test:
     runs-on: macos-15
+    permissions:
+      contents: write
     timeout-minutes: 60 
 
     steps:
@@ -40,6 +42,7 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "ci: snapshots updated [skip ci]"
+        file_pattern: docs/screenshots/*
 
     - name: Build for testing
       run: |
