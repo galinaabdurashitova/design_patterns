@@ -1,6 +1,6 @@
 project "./DesignPatterns/DesignPatterns.xcodeproj"
 
-scheme  "DesignPatternsUITests" 
+scheme  "DesignPatterns" 
 devices ["iPhone 16 Pro"] 
 languages ["en-US"]
 
