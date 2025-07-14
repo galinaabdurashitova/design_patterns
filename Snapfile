@@ -1,5 +1,5 @@
 project "./DesignPatterns/DesignPatterns.xcodeproj"
-devices ["iPhone 15 Pro"]
+devices ["iPhone 16 Pro"]
 languages ["en-US"]
 scheme("DesignPatternsUITests")
 
