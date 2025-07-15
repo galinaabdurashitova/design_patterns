@@ -46,11 +46,7 @@ jobs:
 
     # ─── Boot exactly that simulator ────────────────────────────────────
     - name: Boot simulator
-      run: |
-        for d in $(xcrun simctl list devices | grep Booted | awk -F'[()]' '{print $2}'); do
-          xcrun simctl shutdown "$d" || true
-        done
-        xcrun simctl boot "${{ steps.sim.outputs.udid }}" || true
+      run: xcrun simctl boot "${{ steps.sim.outputs.udid }}" || true
 
     # ─── fastlane & helpers ─────────────────────────────────────────────
     - name: Install fastlane
