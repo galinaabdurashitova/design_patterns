@@ -65,9 +65,9 @@ jobs:
     - name: Take screenshots (fastlane snapshot)
       env:
         FASTLANE_SKIP_UPDATE_CHECK: true
-      run: |
-        fastlane snapshot --verbose \
-          --force_simulator "${{ steps.sim.outputs.udid }}"
+        FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "180"
+        FASTLANE_XCODEBUILD_SETTINGS_RETRIES:  "1"
+      run: fastlane snapshot --verbose
 
     - name: Commit updated screenshots
       uses: stefanzweifel/git-auto-commit-action@v5
