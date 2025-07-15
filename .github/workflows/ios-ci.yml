@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+env:
+  SIM_DEVICE: "iPhone 16 Pro"
+  SIM_OS: "latest" 
+
 jobs:
   build-test:
     runs-on: macos-15
@@ -28,7 +32,7 @@ jobs:
         restore-keys: ${{ runner.os }}-spm-
 
     - name: Boot simulator once
-      run: xcrun simctl boot "iPhone 16 Pro" || true
+      run: xcrun simctl boot "${SIM_DEVICE}" || true
 
     - name: Install fastlane
       run: brew install fastlane
@@ -56,7 +60,7 @@ jobs:
         xcodebuild build-for-testing \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination 'platform=iOS Simulator,name=iPhone 15 Pro' \
+          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS}" \
           -enableCodeCoverage YES
 
     - name: Run Unit Tests
@@ -64,7 +68,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination 'platform=iOS Simulator,name=iPhone 15 Pro' \
+          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS}" \
           -only-testing:DesignPatternsTests \
           -parallel-testing-enabled YES \
           -maximum-concurrent-test-simulator-destinations 2 \
@@ -75,7 +79,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination 'platform=iOS Simulator,name=iPhone 15 Pro' \
+          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS}" \
           -only-testing:DesignPatternsSnapshotTests \
           -parallel-testing-enabled NO \
           -maximum-concurrent-test-simulator-destinations 1 \
@@ -86,7 +90,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination 'platform=iOS Simulator,name=iPhone 15 Pro' \
+          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS}" \
           -only-testing:DesignPatternsUITests \
           -parallel-testing-enabled NO \
           -maximum-concurrent-test-simulator-destinations 1 \
