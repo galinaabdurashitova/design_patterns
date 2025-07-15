@@ -6,21 +6,24 @@ on:
 
 env:
   SIM_DEVICE: "iPhone 16 Pro"
-  SIM_OS: "latest" 
+  SIM_OS:     "18.5" 
 
 jobs:
   build-test:
     runs-on: macos-15
     permissions:
       contents: write
-    timeout-minutes: 60 
+    timeout-minutes: 60
 
     steps:
+    # ─── Source ─────────────────────────────────────────────────────────
     - uses: actions/checkout@v4
 
+    # ─── Xcode version ──────────────────────────────────────────────────
     - name: Select Xcode 16.4
       run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
+    # ─── Swift‑PM cache ─────────────────────────────────────────────────
     - name: Cache Swift Packages
       uses: actions/cache@v4
       with:
@@ -28,12 +31,26 @@ jobs:
           ~/.swiftpm
           ~/Library/Developer/Xcode/DerivedData/WorkspaceArtifacts/*
           ~/Library/Developer/Xcode/DerivedData/ModuleCache
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-        restore-keys: ${{ runner.os }}-spm-
+        key:  macOS-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: macOS-spm-
 
-    - name: Boot simulator once
-      run: xcrun simctl boot "${SIM_DEVICE}" || true
+    # ─── Pick concrete simulator UDID ───────────────────────────────────
+    - name: Pick simulator UDID
+      id: sim
+      run: |
+        UDID=$(xcrun simctl list devices "iOS ${SIM_OS}" \
+               | grep "${SIM_DEVICE} (" \
+               | head -n1 | sed -E 's/.*\(([^)]+)\).*/\1/')
+        echo "Picked UDID: $UDID"
+        echo "udid=$UDID" >>"$GITHUB_OUTPUT"
 
+    # ─── Boot exactly that simulator ────────────────────────────────────
+    - name: Boot simulator
+      run: |
+        xcrun simctl shutdown all || true
+        xcrun simctl boot "${{ steps.sim.outputs.udid }}"
+
+    # ─── fastlane & helpers ─────────────────────────────────────────────
     - name: Install fastlane
       run: brew install fastlane
       
@@ -41,13 +58,14 @@ jobs:
       run: xcodebuild -showBuildSettings \
             -scheme DesignPatterns \
             -project DesignPatterns/DesignPatterns.xcodeproj | head -5
-    
+
+    # ─── Screenshots (fastlane snapshot) ────────────────────────────────
     - name: Take screenshots (fastlane snapshot)
       env:
         FASTLANE_SKIP_UPDATE_CHECK: true
-        FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "180"
-        FASTLANE_XCODEBUILD_SETTINGS_RETRIES:  "1"
-      run: fastlane snapshot --verbose
+      run: |
+        fastlane snapshot --verbose \
+          --force_simulator "${{ steps.sim.outputs.udid }}"
 
     - name: Commit updated screenshots
       uses: stefanzweifel/git-auto-commit-action@v5
@@ -55,12 +73,13 @@ jobs:
         commit_message: "ci: snapshots updated [skip ci]"
         file_pattern: docs/screenshots/*
 
+    # ─── BUILD & TESTS ──────────────────────────────────────────────────
     - name: Build for testing
       run: |
         xcodebuild build-for-testing \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS}" \
+          -destination "id=${{ steps.sim.outputs.udid }}" \
           -enableCodeCoverage YES
 
     - name: Run Unit Tests
@@ -68,7 +87,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS}" \
+          -destination "id=${{ steps.sim.outputs.udid }}" \
           -only-testing:DesignPatternsTests \
           -parallel-testing-enabled YES \
           -maximum-concurrent-test-simulator-destinations 2 \
@@ -79,7 +98,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS}" \
+          -destination "id=${{ steps.sim.outputs.udid }}" \
           -only-testing:DesignPatternsSnapshotTests \
           -parallel-testing-enabled NO \
           -maximum-concurrent-test-simulator-destinations 1 \
@@ -90,12 +109,13 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS}" \
+          -destination "id=${{ steps.sim.outputs.udid }}" \
           -only-testing:DesignPatternsUITests \
           -parallel-testing-enabled NO \
           -maximum-concurrent-test-simulator-destinations 1 \
           -enableCodeCoverage YES
 
+    # ─── Coverage badge ────────────────────────────────────────────────
     - name: Extract coverage %
       id: cov
       run: |
@@ -104,7 +124,7 @@ jobs:
         APP=$(find "$OBJROOT" -name DesignPatterns.app | head -1)
         PCT=$(xcrun llvm-cov export -summary-only -instr-profile "$PROFDATA" "$APP" \
               | awk '/line.*percent:/ {printf "%.1f",$3*100}')
-        echo "percent=$PCT" >> $GITHUB_OUTPUT
+        echo "percent=$PCT" >> "$GITHUB_OUTPUT"
 
     - name: Save badge json
       run: |
