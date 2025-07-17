@@ -6,7 +6,7 @@ on:
 
 env:
   SIM_DEVICE: "iPhone 16 Pro"
-  SIM_OS:     "18.5" 
+  SIM_OS:     "18.5"
 
 jobs:
   build-test:
@@ -34,24 +34,10 @@ jobs:
         key:  macOS-spm-${{ hashFiles('**/Package.resolved') }}
         restore-keys: macOS-spm-
 
-    # ─── Pick concrete simulator UDID ───────────────────────────────────
-    - name: Pick simulator UDID
-      id: sim
-      run: |
-        UDID=$(xcrun simctl list devices "iOS ${SIM_OS}" \
-               | grep "${SIM_DEVICE} (" \
-               | head -n1 | sed -E 's/.*\(([^)]+)\).*/\1/')
-        echo "Picked UDID: $UDID"
-        echo "udid=$UDID" >>"$GITHUB_OUTPUT"
-
-    # ─── Boot exactly that simulator ────────────────────────────────────
-    - name: Boot simulator
-      run: xcrun simctl boot "${{ steps.sim.outputs.udid }}" || true
-
     # ─── fastlane & helpers ─────────────────────────────────────────────
     - name: Install fastlane
       run: brew install fastlane
-      
+
     - name: Warm‑up xcodebuild settings
       run: xcodebuild -showBuildSettings \
             -scheme DesignPatterns \
@@ -77,7 +63,7 @@ jobs:
         xcodebuild build-for-testing \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "id=${{ steps.sim.outputs.udid }}" \
+          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS},arch=arm64" \
           -enableCodeCoverage YES
 
     - name: Run Unit Tests
@@ -85,7 +71,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "id=${{ steps.sim.outputs.udid }}" \
+          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS},arch=arm64" \
           -only-testing:DesignPatternsTests \
           -parallel-testing-enabled YES \
           -maximum-concurrent-test-simulator-destinations 2 \
@@ -96,7 +82,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "id=${{ steps.sim.outputs.udid }}" \
+          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS},arch=arm64" \
           -only-testing:DesignPatternsSnapshotTests \
           -parallel-testing-enabled NO \
           -maximum-concurrent-test-simulator-destinations 1 \
@@ -107,7 +93,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "id=${{ steps.sim.outputs.udid }}" \
+          -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=${SIM_OS},arch=arm64" \
           -only-testing:DesignPatternsUITests \
           -parallel-testing-enabled NO \
           -maximum-concurrent-test-simulator-destinations 1 \
