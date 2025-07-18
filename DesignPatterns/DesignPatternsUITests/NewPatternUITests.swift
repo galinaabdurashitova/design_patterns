@@ -11,16 +11,13 @@ final class NewPatternUITests: XCTestCase {
     var app: XCUIApplication!
     
     private let timeout: Double = 30
-    private let testsNamePrefix: String = "NewPattern"
     
     private var next: XCUIElement      { app.buttons["nextStepButton"] }
     private var prev: XCUIElement      { app.buttons["previousStepButton"] }
     
-    @MainActor
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        setupSnapshot(app)
         app.launchArguments += ["--UITests", "-disableAnimations"]
         app.launch()
     }
@@ -33,11 +30,9 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(closeButton.waitForNonExistence(timeout: timeout))
     }
     
-    @MainActor
     func test_addPatternSheet_nameInputStep() {
         openNewPatternSheet()
         checkStepAtStart(stepN: 1)
-        snapshot("\(testsNamePrefix)_01_NewPatternName")
         
         XCTAssertTrue(next.exists)
         XCTAssertFalse(next.isEnabled)
@@ -49,7 +44,6 @@ final class NewPatternUITests: XCTestCase {
         waitForNextStepButtonEnabled()
     }
     
-    @MainActor
     func test_addPatternSheet_patternTypeStep() {
         openNewPatternSheet()
         
@@ -66,8 +60,6 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(behavioralTypeButton.exists)
         behavioralTypeButton.tap()
         
-        snapshot("\(testsNamePrefix)_02_NewPatternType")
-        
         waitForNextStepButtonEnabled()
         
         prev.tap()
@@ -75,7 +67,6 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(nameInputTextField.waitForExistence(timeout: timeout))
     }
     
-    @MainActor
     func test_addPatternSheet_descriptionInputStep() {
         openNewPatternSheet()
         
@@ -84,7 +75,6 @@ final class NewPatternUITests: XCTestCase {
             .pickType()
         
         checkStepAtStart(stepN: 3)
-        snapshot("\(testsNamePrefix)_03_NewPatternDescription")
         
         let descriptionInputTextView = app.textFields["addPatternDescriptionTextField"]
         XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: timeout))
@@ -97,7 +87,6 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(behavioralTypeButton.waitForExistence(timeout: timeout))
     }
     
-    @MainActor
     func test_addPatternSheet_codeExamplesStep() {
         openNewPatternSheet()
         
@@ -128,8 +117,6 @@ final class NewPatternUITests: XCTestCase {
         secondField.tap()
         secondField.typeText("Test2")
         
-        snapshot("\(testsNamePrefix)_05_NewPatternCodeExamples")
-        
         deleteCodeExampleButton.tap()
         XCTAssertTrue(secondField.waitForNonExistence(timeout: timeout))
         
@@ -142,7 +129,6 @@ final class NewPatternUITests: XCTestCase {
         XCTAssertTrue(descriptionInputTextView.waitForExistence(timeout: timeout))
     }
     
-    @MainActor
     func test_addPatternSheet_confirmView_when3AndLessCodeExamples() {
         openNewPatternSheet()
         
@@ -158,7 +144,6 @@ final class NewPatternUITests: XCTestCase {
             .addCodeExamples(testCodeExamples)
         
         checkStepAtStart(stepN: 5)
-        snapshot("\(testsNamePrefix)_06_NewPatternConfirm")
         
         let nameTextField = app.staticTexts["addPatternConfirmField-Name"]
         XCTAssertEqual(nameTextField.label, testName)
@@ -209,7 +194,17 @@ final class NewPatternUITests: XCTestCase {
             .pickType()
             .fillDescription()
             .addCodeExamples()
+        
+        let enabledPredicate = NSPredicate(format: "exists == true")
+        let enabledExpectation = expectation(
+            for: enabledPredicate,
+            evaluatedWith: prev,
+            handler: nil
+        )
+        wait(for: [enabledExpectation], timeout: timeout)
+        XCTAssertTrue(prev.exists)
         prev.tap()
+        
         let codeExampleField = app.scrollViews["addPatternCodeExampleTextField-0"]
         XCTAssertTrue(codeExampleField.waitForExistence(timeout: timeout))
     }

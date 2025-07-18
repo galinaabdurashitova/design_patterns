@@ -10,20 +10,15 @@ import XCTest
 final class DesignPatternsListUITests: XCTestCase {
     var app: XCUIApplication!
     private let timeout: Double = 30
-    private let testsNamePrefix: String = "DesignPatternsList"
     
-    @MainActor
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        setupSnapshot(app)
         app.launchArguments += ["--UITests", "-disableAnimations"]
         app.launch()
     }
     
-    @MainActor
     func test_mainScreenContent_showsPatternsContent() {
-        snapshot("\(testsNamePrefix)_01_ListView")
         let list = app.collectionViews["PatternsList"]
         XCTAssertEqual(list.cells.count, 3)
     }
@@ -39,14 +34,11 @@ final class DesignPatternsListUITests: XCTestCase {
         XCTAssertEqual(typeButton.label, "Type")
     }
     
-    @MainActor
     func test_designPatternView_showsPatternDetailsAndCloses() {
         app.buttons["patternRow-Builder"].tap()
         
         let designPatternView = app.staticTexts["patternView-Builder"]
         XCTAssertTrue(designPatternView.exists)
-        
-        snapshot("\(testsNamePrefix)_02_PatternView_Builder")
         
         let list = app.collectionViews["PatternsList"]
         XCTAssertFalse(list.isEnabled)
@@ -56,13 +48,10 @@ final class DesignPatternsListUITests: XCTestCase {
         XCTAssertTrue(designPatternView.waitForNonExistence(timeout: timeout))
     }
     
-    @MainActor
     func test_searchBar_searchesPatterns() {
         let textField = app.textFields["searchTextField"]
         textField.tap()
         textField.typeText("Buil")
-        
-        snapshot("\(testsNamePrefix)_03_ListView_search")
         
         let list = app.collectionViews["PatternsList"]
         
@@ -86,7 +75,6 @@ final class DesignPatternsListUITests: XCTestCase {
         XCTAssertEqual(textField.placeholderValue, "Search patterns")
     }
     
-    @MainActor
     func test_typeFilterSheet_filtersPatterns() {
         let filterButton = app.buttons["filterButton"]
         XCTAssertTrue(filterButton.waitForExistence(timeout: timeout))
@@ -103,8 +91,6 @@ final class DesignPatternsListUITests: XCTestCase {
         creational.tap()
         structural.tap()
         
-        snapshot("\(testsNamePrefix)_04_FilterBottomSheet")
-        
         XCTAssertTrue(doneButton.isHittable, "Done button is not tappable")
         doneButton.tap()
 
@@ -115,8 +101,6 @@ final class DesignPatternsListUITests: XCTestCase {
         
         XCTAssertEqual(list.cells.count, 2)
         XCTAssertEqual(filterButton.label, "2 types")
-        
-        snapshot("\(testsNamePrefix)_05_ListView_filtered")
     }
 
     

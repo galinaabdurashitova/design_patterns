@@ -32,6 +32,13 @@
 			remoteGlobalIDString = 2A08E5E52DCD455E008E90A2;
 			remoteInfo = DesignPatterns;
 		};
+		2A19841C2E2AA10A00AE6F14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A08E5DE2DCD455E008E90A2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2A08E5E52DCD455E008E90A2;
+			remoteInfo = DesignPatterns;
+		};
 		2AD0D0022E1183F7009A93A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2A08E5DE2DCD455E008E90A2 /* Project object */;
@@ -45,6 +52,7 @@
 		2A08E5E62DCD455E008E90A2 /* DesignPatterns.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DesignPatterns.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A08E5F32DCD4561008E90A2 /* DesignPatternsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DesignPatternsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A08E5FD2DCD4561008E90A2 /* DesignPatternsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DesignPatternsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A1984162E2AA10A00AE6F14 /* FastlaneSnapshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastlaneSnapshots.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2AD0B30F2E09D66F009A93A3 /* DesignPatterns.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DesignPatterns.xcdatamodel; sourceTree = "<group>"; };
 		2AD0CFFE2E1183F7009A93A3 /* DesignPatternsSnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DesignPatternsSnapshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -76,6 +84,11 @@
 		2A08E6002DCD4561008E90A2 /* DesignPatternsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = DesignPatternsUITests;
+			sourceTree = "<group>";
+		};
+		2A1984172E2AA10A00AE6F14 /* FastlaneSnapshots */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FastlaneSnapshots;
 			sourceTree = "<group>";
 		};
 		2AD0CFFF2E1183F7009A93A3 /* DesignPatternsSnapshotTests */ = {
@@ -113,6 +126,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2A1984132E2AA10A00AE6F14 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2AD0CFFB2E1183F7009A93A3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -132,6 +152,7 @@
 				2A08E5F62DCD4561008E90A2 /* DesignPatternsTests */,
 				2A08E6002DCD4561008E90A2 /* DesignPatternsUITests */,
 				2AD0CFFF2E1183F7009A93A3 /* DesignPatternsSnapshotTests */,
+				2A1984172E2AA10A00AE6F14 /* FastlaneSnapshots */,
 				2AD0D0072E11843F009A93A3 /* Frameworks */,
 				2A08E5E72DCD455E008E90A2 /* Products */,
 			);
@@ -144,6 +165,7 @@
 				2A08E5F32DCD4561008E90A2 /* DesignPatternsTests.xctest */,
 				2A08E5FD2DCD4561008E90A2 /* DesignPatternsUITests.xctest */,
 				2AD0CFFE2E1183F7009A93A3 /* DesignPatternsSnapshotTests.xctest */,
+				2A1984162E2AA10A00AE6F14 /* FastlaneSnapshots.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -232,6 +254,29 @@
 			productReference = 2A08E5FD2DCD4561008E90A2 /* DesignPatternsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		2A1984152E2AA10A00AE6F14 /* FastlaneSnapshots */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A1984202E2AA10A00AE6F14 /* Build configuration list for PBXNativeTarget "FastlaneSnapshots" */;
+			buildPhases = (
+				2A1984122E2AA10A00AE6F14 /* Sources */,
+				2A1984132E2AA10A00AE6F14 /* Frameworks */,
+				2A1984142E2AA10A00AE6F14 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2A19841D2E2AA10A00AE6F14 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				2A1984172E2AA10A00AE6F14 /* FastlaneSnapshots */,
+			);
+			name = FastlaneSnapshots;
+			packageProductDependencies = (
+			);
+			productName = FastlaneSnapshots;
+			productReference = 2A1984162E2AA10A00AE6F14 /* FastlaneSnapshots.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		2AD0CFFD2E1183F7009A93A3 /* DesignPatternsSnapshotTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2AD0D0042E1183F7009A93A3 /* Build configuration list for PBXNativeTarget "DesignPatternsSnapshotTests" */;
@@ -277,6 +322,10 @@
 						CreatedOnToolsVersion = 16.3;
 						TestTargetID = 2A08E5E52DCD455E008E90A2;
 					};
+					2A1984152E2AA10A00AE6F14 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 2A08E5E52DCD455E008E90A2;
+					};
 					2AD0CFFD2E1183F7009A93A3 = {
 						CreatedOnToolsVersion = 16.4;
 						TestTargetID = 2A08E5E52DCD455E008E90A2;
@@ -307,6 +356,7 @@
 				2A08E5F22DCD4561008E90A2 /* DesignPatternsTests */,
 				2A08E5FC2DCD4561008E90A2 /* DesignPatternsUITests */,
 				2AD0CFFD2E1183F7009A93A3 /* DesignPatternsSnapshotTests */,
+				2A1984152E2AA10A00AE6F14 /* FastlaneSnapshots */,
 			);
 		};
 /* End PBXProject section */
@@ -327,6 +377,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2A08E5FB2DCD4561008E90A2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2A1984142E2AA10A00AE6F14 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -365,6 +422,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2A1984122E2AA10A00AE6F14 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2AD0CFFA2E1183F7009A93A3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -384,6 +448,11 @@
 			isa = PBXTargetDependency;
 			target = 2A08E5E52DCD455E008E90A2 /* DesignPatterns */;
 			targetProxy = 2A08E5FE2DCD4561008E90A2 /* PBXContainerItemProxy */;
+		};
+		2A19841D2E2AA10A00AE6F14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2A08E5E52DCD455E008E90A2 /* DesignPatterns */;
+			targetProxy = 2A19841C2E2AA10A00AE6F14 /* PBXContainerItemProxy */;
 		};
 		2AD0D0032E1183F7009A93A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -670,6 +739,42 @@
 			};
 			name = Release;
 		};
+		2A19841E2E2AA10A00AE6F14 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 77G893PS3R;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = galina.DesignPatterns.FastlaneSnapshots;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DesignPatterns;
+			};
+			name = Debug;
+		};
+		2A19841F2E2AA10A00AE6F14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 77G893PS3R;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = galina.DesignPatterns.FastlaneSnapshots;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DesignPatterns;
+			};
+			name = Release;
+		};
 		2AD0D0052E1183F7009A93A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -751,6 +856,15 @@
 			buildConfigurations = (
 				2A08E60E2DCD4561008E90A2 /* Debug */,
 				2A08E60F2DCD4561008E90A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2A1984202E2AA10A00AE6F14 /* Build configuration list for PBXNativeTarget "FastlaneSnapshots" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A19841E2E2AA10A00AE6F14 /* Debug */,
+				2A19841F2E2AA10A00AE6F14 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
