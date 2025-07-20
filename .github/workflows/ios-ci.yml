@@ -32,23 +32,6 @@ jobs:
         key: macOS-spm-${{ hashFiles('**/Package.resolved') }}
         restore-keys: macOS-spm-
 
-    - name: Install fastlane
-      run: brew install fastlane
-
-    - name: Show build settings
-      run: xcodebuild -showBuildSettings -scheme DesignPatterns -project DesignPatterns/DesignPatterns.xcodeproj | head -5
-
-    - name: Take screenshots
-      env:
-        FASTLANE_SKIP_UPDATE_CHECK: true
-      run: fastlane snapshot --verbose
-
-    - name: Commit updated screenshots
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: "ci: snapshots updated [skip ci]"
-        file_pattern: docs/screenshots/*
-
     - name: Build for testing
       run: |
         xcodebuild build-for-testing \
@@ -109,3 +92,24 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "ci: coverage badge updated [skip ci]"
+        file_pattern: docs/coverage.json
+
+    - name: Shutdown simulators
+      run: xcrun simctl shutdown all || true
+
+    - name: Install fastlane
+      run: brew install fastlane
+
+    - name: Take screenshots
+      env:
+        FASTLANE_SKIP_UPDATE_CHECK: true
+      run: |
+        fastlane snapshot --verbose \
+          --scheme FastlaneSnapshots \
+          --devices "$SIM_DEVICE"
+
+    - name: Commit updated screenshots
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "ci: snapshots updated [skip ci]"
+        file_pattern: docs/screenshots/*
