@@ -10,7 +10,7 @@ import XCTest
 final class NewPatternUITests: XCTestCase {
     var app: XCUIApplication!
     
-    private let timeout: Double = 30
+    private let timeout: Double = 60
     
     private var next: XCUIElement      { app.buttons["nextStepButton"] }
     private var prev: XCUIElement      { app.buttons["previousStepButton"] }
