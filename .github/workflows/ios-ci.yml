@@ -6,7 +6,8 @@ on:
 
 env:
   SIM_DEVICE: "iPhone 16 Pro"
-  SIM_OS:     "18.5"
+  SIM_OS: "18.5"
+  DEST: "platform=iOS Simulator,name=iPhone 16 Pro,OS=18.5,arch=arm64"
 
 jobs:
   build-test:
@@ -16,14 +17,11 @@ jobs:
     timeout-minutes: 180
 
     steps:
-    # Source
     - uses: actions/checkout@v4
 
-    # Xcode version
     - name: Select Xcode 16.4
       run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
-    # Swift‑PM cache
     - name: Cache Swift Packages
       uses: actions/cache@v4
       with:
@@ -31,65 +29,15 @@ jobs:
           ~/.swiftpm
           ~/Library/Developer/Xcode/DerivedData/WorkspaceArtifacts/*
           ~/Library/Developer/Xcode/DerivedData/ModuleCache
-        key:  macOS-spm-${{ hashFiles('**/Package.resolved') }}
+        key: macOS-spm-${{ hashFiles('**/Package.resolved') }}
         restore-keys: macOS-spm-
 
-    # fastlane & helpers
-    - name: Install fastlane
-      run: brew install fastlane
-
-    - name: Show build settings
-      run: xcodebuild -showBuildSettings \
-            -scheme DesignPatterns \
-            -project DesignPatterns/DesignPatterns.xcodeproj | head -5
-
-    # Screenshots (fastlane snapshot)
-    - name: Take screenshots
-      env:
-        FASTLANE_SKIP_UPDATE_CHECK: true
-        FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "180"
-        FASTLANE_XCODEBUILD_SETTINGS_RETRIES:  "1"
-      run: fastlane snapshot --verbose
-
-    - name: Commit updated screenshots
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: "ci: snapshots updated [skip ci]"
-        file_pattern: docs/screenshots/*
-
-    # Reset simulators
-    - name: Reset simulators
-      run: |
-        xcrun simctl shutdown all || true
-        xcrun simctl erase    all || true
-
-    # Pick concrete simulator UDID
-    - name: Pick simulator UDID
-      id: sim
-      run: |
-        UDID=$(xcrun simctl list devices "iOS ${SIM_OS}" \
-               | grep -m1 -E "${SIM_DEVICE} \(" \
-               | awk -F'[()]' '{print $2}')
-        if [ -z "$UDID" ]; then
-          echo "Simulator not found"
-          exit 1
-        fi
-        echo "Picked UDID: $UDID"
-        echo "udid=$UDID" >>"$GITHUB_OUTPUT"
-
-    # Boot simulator and wait until it is ready
-    - name: Boot simulator
-      run: |
-        xcrun simctl boot "${{ steps.sim.outputs.udid }}"
-        xcrun simctl bootstatus "${{ steps.sim.outputs.udid }}" -b
-
-    # BUILD & TESTS
     - name: Build for testing
       run: |
         xcodebuild build-for-testing \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "id=${{ steps.sim.outputs.udid }}" \
+          -destination "$DEST" \
           -enableCodeCoverage YES
 
     - name: Run Unit Tests
@@ -97,7 +45,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "id=${{ steps.sim.outputs.udid }}" \
+          -destination "$DEST" \
           -only-testing:DesignPatternsTests \
           -parallel-testing-enabled YES \
           -maximum-concurrent-test-simulator-destinations 2 \
@@ -108,7 +56,7 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "id=${{ steps.sim.outputs.udid }}" \
+          -destination "$DEST" \
           -only-testing:DesignPatternsSnapshotTests \
           -parallel-testing-enabled NO \
           -maximum-concurrent-test-simulator-destinations 1 \
@@ -119,29 +67,100 @@ jobs:
         xcodebuild test-without-building \
           -project DesignPatterns/DesignPatterns.xcodeproj \
           -scheme DesignPatterns \
-          -destination "id=${{ steps.sim.outputs.udid }}" \
+          -destination "$DEST" \
           -only-testing:DesignPatternsUITests \
           -parallel-testing-enabled NO \
           -maximum-concurrent-test-simulator-destinations 1 \
           -enableCodeCoverage YES
 
-    # Coverage badge
     - name: Extract coverage %
       id: cov
       run: |
-        OBJROOT=$(xcodebuild -showBuildSettings -scheme DesignPatterns | awk '/OBJROOT/ {print $3}')
+        cd DesignPatterns
+
+        OBJROOT=$(xcodebuild \
+                    -project DesignPatterns.xcodeproj \
+                    -scheme DesignPatterns \
+                    -showBuildSettings | awk '/OBJROOT/ {print $3}')
+
+        if [[ -z "$OBJROOT" ]]; then
+          echo "::error::OBJROOT is empty — Xcode project not found"
+          exit 1
+        fi
+
         PROFDATA=$(find "$OBJROOT" -name default.profdata | head -1)
         APP=$(find "$OBJROOT" -name DesignPatterns.app | head -1)
+
+        if [[ -z "$PROFDATA" || -z "$APP" ]]; then
+          echo "::error::Coverage artifacts not found"
+          exit 1
+        fi
+
         PCT=$(xcrun llvm-cov export -summary-only -instr-profile "$PROFDATA" "$APP" \
               | awk '/line.*percent:/ {printf "%.1f",$3*100}')
+
+        if [[ -z "$PCT" ]]; then
+          echo "::warning::Coverage percent empty"
+          PCT="0.0"
+        fi
+
         echo "percent=$PCT" >> "$GITHUB_OUTPUT"
 
     - name: Save badge json
       run: |
         mkdir -p docs
-        echo "[{\"label\":\"coverage\",\"message\":\"${{ steps.cov.outputs.percent }}%\",\"color\":\"blue\"}]" > docs/coverage.json
+        PCT="${{ steps.cov.outputs.percent }}"
+
+        PCT=$(echo "$PCT" | tr -d '[:space:]')
+
+        if awk "BEGIN {exit !($PCT >= 90)}"; then
+          COLOR="brightgreen"
+        elif awk "BEGIN {exit !($PCT >= 80)}"; then
+          COLOR="green"
+        elif awk "BEGIN {exit !($PCT >= 70)}"; then
+          COLOR="yellowgreen"
+        elif awk "BEGIN {exit !($PCT >= 60)}"; then
+          COLOR="yellow"
+        elif awk "BEGIN {exit !($PCT >= 50)}"; then
+          COLOR="orange"
+        else
+          COLOR="red"
+        fi
+
+        cat > docs/coverage.json <<EOF
+        {
+          "schemaVersion": 1,
+          "label": "coverage",
+          "message": "${PCT}%",
+          "color": "${COLOR}"
+        }
+        EOF
+
+        echo "Generated docs/coverage.json:"
+        cat docs/coverage.json
 
     - name: Commit coverage badge
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "ci: coverage badge updated [skip ci]"
+        file_pattern: docs/coverage.json
+
+    - name: Shutdown simulators
+      run: xcrun simctl shutdown all || true
+
+    - name: Install fastlane
+      run: brew install fastlane
+
+    - name: Take screenshots
+      env:
+        FASTLANE_SKIP_UPDATE_CHECK: true
+      run: |
+        fastlane snapshot --verbose \
+          --scheme FastlaneSnapshots \
+          --devices "$SIM_DEVICE"
+
+    - name: Commit updated screenshots
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "ci: snapshots updated [skip ci]"
+        file_pattern: docs/screenshots/*
