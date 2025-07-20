@@ -76,11 +76,24 @@ jobs:
     - name: Extract coverage %
       id: cov
       run: |
-        OBJROOT=$(xcodebuild -showBuildSettings -scheme DesignPatterns | awk '/OBJROOT/ {print $3}')
+        cd DesignPatterns
+        
+        OBJROOT=$(xcodebuild \
+                    -project DesignPatterns.xcodeproj \
+                    -scheme DesignPatterns \
+                    -showBuildSettings | awk '/OBJROOT/ {print $3}')
+    
+        if [[ -z "$OBJROOT" ]]; then
+          echo "::error::OBJROOT is empty — Xcode project not found"
+          exit 1
+        fi
+    
         PROFDATA=$(find "$OBJROOT" -name default.profdata | head -1)
         APP=$(find "$OBJROOT" -name DesignPatterns.app | head -1)
+    
         PCT=$(xcrun llvm-cov export -summary-only -instr-profile "$PROFDATA" "$APP" \
               | awk '/line.*percent:/ {printf "%.1f",$3*100}')
+    
         echo "percent=$PCT" >> "$GITHUB_OUTPUT"
 
     - name: Save badge json
