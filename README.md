@@ -1,6 +1,7 @@
 # DesignPatterns App (SwiftUI + Clean Architecture) — currently WIP
 
-[![CI](https://github.com/galinaabdurashitova/design_patterns/actions/workflows/ios-ci.yml/badge.svg?branch=main)](https://github.com/galinaabdurashitova/design_patterns/actions/workflows/ios-ci.yml)
+[![CI](https://github.com/galinaabdurashitova/design_patterns/actions/workflows/ios-ci.yml/badge.svg?branch=main)](https://github.com/galinaabdurashitova/design_patterns/actions/workflows/ios-ci.yml) ![Test coverage](https://github.com/galinaabdurashitova/design_patterns/docs/coverage.json?branch=main)
+
 
 This is a demo iOS application built with **SwiftUI** that demonstrates the **real-world use of software design patterns** in a clean, modular architecture.
 
