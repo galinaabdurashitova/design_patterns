@@ -78,33 +78,36 @@ jobs:
       run: |
         cd DesignPatterns
 
-        OBJROOT=$(xcodebuild \
-                    -project DesignPatterns.xcodeproj \
-                    -scheme DesignPatterns \
-                    -showBuildSettings | awk '/OBJROOT/ {print $3}')
+        read -r OBJROOT BUILD_DIR <<<$(xcodebuild \
+          -project DesignPatterns.xcodeproj \
+          -scheme  DesignPatterns \
+          -showBuildSettings |
+          awk '/OBJROOT/ {o=$3} /CONFIGURATION_BUILD_DIR/ {b=$3} END{print o,b}')
 
-        if [[ -z "$OBJROOT" ]]; then
-          echo "::error::OBJROOT is empty — Xcode project not found"
+        if [[ -z "$OBJROOT" || -z "$BUILD_DIR" ]]; then
+          echo "::error::Не удалось определить OBJROOT/BUILD_DIR"
           exit 1
         fi
 
-        PROFDATA=$(find "$OBJROOT" -name default.profdata | head -1)
-        APP=$(find "$OBJROOT" -name DesignPatterns.app | head -1)
+        PROFDATA=$(find "$OBJROOT" -type f -name '*.profdata' | head -1)
+        APP="$BUILD_DIR/DesignPatterns.app"
 
-        if [[ -z "$PROFDATA" || -z "$APP" ]]; then
+        if [[ ! -f "$PROFDATA" || ! -d "$APP" ]]; then
           echo "::error::Coverage artifacts not found"
+          echo "PROFDATA = $PROFDATA"
+          echo "APP      = $APP"
           exit 1
         fi
 
         PCT=$(xcrun llvm-cov export -summary-only -instr-profile "$PROFDATA" "$APP" \
-              | awk '/line.*percent:/ {printf "%.1f",$3*100}')
+                | awk '/line.*percent:/ {printf "%.1f",$3*100}')
 
         if [[ -z "$PCT" ]]; then
-          echo "::warning::Coverage percent empty"
+          echo "::warning::Coverage percent empty, fallback to 0.0"
           PCT="0.0"
         fi
 
-        echo "percent=$PCT" >> "$GITHUB_OUTPUT"
+        echo "percent=$PCT" >>"$GITHUB_OUTPUT"
 
     - name: Save badge json
       run: |
