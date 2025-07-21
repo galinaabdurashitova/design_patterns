@@ -54,10 +54,7 @@ final class DesignPatternsListUITests: XCTestCase {
         textField.typeText("Buil")
         
         let list = app.collectionViews["PatternsList"]
-        
-        let firstCell = list.cells.element(boundBy: list.cells.count-1)
-        XCTAssertTrue(firstCell.waitForNonExistence(timeout: timeout))
-        
+        XCTAssertTrue(list.cells.waitUntilCount(1, timeout: timeout))
         XCTAssertEqual(list.cells.count, 1)
     }
     
