@@ -53,7 +53,8 @@ jobs:
             -parallel-testing-enabled YES \
             -maximum-concurrent-test-simulator-destinations 2 \
             -derivedDataPath "$DERIVED_DATA" \
-            -enableCodeCoverage YES
+            -enableCodeCoverage YES \
+            -resultBundlePath "$DERIVED_DATA/Results/Unit.xcresult"
 
       - name: Run Snapshot Tests
         run: |
@@ -65,7 +66,8 @@ jobs:
             -parallel-testing-enabled NO \
             -maximum-concurrent-test-simulator-destinations 1 \
             -derivedDataPath "$DERIVED_DATA" \
-            -enableCodeCoverage YES
+            -enableCodeCoverage YES \
+            -resultBundlePath "$DERIVED_DATA/Results/Snapshot.xcresult"
 
       - name: Run UI Tests
         run: |
@@ -77,24 +79,39 @@ jobs:
             -parallel-testing-enabled NO \
             -maximum-concurrent-test-simulator-destinations 1 \
             -derivedDataPath "$DERIVED_DATA" \
-            -enableCodeCoverage YES
+            -enableCodeCoverage YES \
+            -resultBundlePath "$DERIVED_DATA/Results/UI.xcresult"
 
       - name: Extract coverage and build badge
         id: cov
         run: |
+          set -eo pipefail
+          shopt -s nullglob
+
+          mapfile -t BUNDLES < <(find "$DERIVED_DATA" -type d -name "*.xcresult")
+          if [ ${#BUNDLES[@]} -eq 0 ]; then
+            echo "No .xcresult bundles found under $DERIVED_DATA" >&2
+            find "$DERIVED_DATA" -maxdepth 4 -type d -print
+            exit 1
+          fi
+
           mkdir -p coverage/json
-          for B in "$DERIVED_DATA"/*Results.xcresult; do
-            [ -d "$B" ] || continue
+          for B in "${BUNDLES[@]}"; do
             xcrun xccov view --report --json "$B" > "coverage/json/$(basename "$B").json"
           done
 
+          files=(coverage/json/*.json)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No coverage json files produced" >&2
+            exit 1
+          fi
+
           COV=$(jq -s '
-            [.[].targets[]]
+            [.[].targets[] | select(.lineCoverage != null)]
             | group_by(.name)
-            | map({name:.[0].name, lineCoverage:(map(.lineCoverage)|max)})
-            | [.[].lineCoverage]
+            | map(max_by(.lineCoverage).lineCoverage)
             | add / length * 100
-          ' coverage/json/*.json)
+          ' "${files[@]}")
 
           printf "%.2f\n" "$COV" > coverage.txt
           echo "coverage=$COV" >> "$GITHUB_OUTPUT"
