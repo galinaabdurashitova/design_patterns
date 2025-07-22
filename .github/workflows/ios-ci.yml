@@ -17,7 +17,6 @@ jobs:
     timeout-minutes: 180
     env:
       DERIVED_DATA: ${{ github.workspace }}/.derived
-      RESULT_BUNDLE: ${{ github.workspace }}/TestResults.xcresult
 
     steps:
       - uses: actions/checkout@v4
@@ -82,21 +81,34 @@ jobs:
 
       - name: Extract coverage %
         id: cov
+        shell: bash
         run: |
           set -euo pipefail
 
-          PROFDATA=$(ls -t "$DERIVED_DATA"/Build/ProfileData/*/*.profdata 2>/dev/null | head -1 || true)
-          APP=$(find "$DERIVED_DATA"/Build/Products -type d -name 'DesignPatterns.app' -print -quit)
+          # собрать все профайлы
+          mapfile -t PROFS < <(find "$DERIVED_DATA" -name '*.profdata' -type f)
+          if [[ ${#PROFS[@]} -eq 0 ]]; then
+            echo "::error::No .profdata files found"
+            exit 1
+          fi
 
-          if [[ -z "$PROFDATA" || -z "$APP" ]]; then
-            echo "::error::Coverage artifacts not found"
-            echo "PROFDATA = $PROFDATA"
-            echo "APP      = $APP"
+          if [[ ${#PROFS[@]} -gt 1 ]]; then
+            MERGED="$DERIVED_DATA/merged.profdata"
+            xcrun llvm-profdata merge -sparse "${PROFS[@]}" -o "$MERGED"
+            PROFDATA="$MERGED"
+          else
+            PROFDATA="${PROFS[0]}"
+          fi
+
+          # бинарь внутри .app
+          APP_BIN=$(find "$DERIVED_DATA"/Build/Products -type f -path "*/DesignPatterns.app/DesignPatterns" -print -quit)
+          if [[ -z "$APP_BIN" ]]; then
+            echo "::error::App binary not found"
             exit 1
           fi
 
           PCT=$(xcrun llvm-cov export -summary-only \
-                  -instr-profile "$PROFDATA" "$APP" \
+                  -instr-profile "$PROFDATA" "$APP_BIN" \
                 | awk '/line.*percent:/ {printf "%.1f",$3*100}')
 
           [[ -z "$PCT" ]] && PCT="0.0"
@@ -133,7 +145,6 @@ jobs:
           }
           EOF
 
-          echo "Generated docs/coverage.json:"
           cat docs/coverage.json
 
       - name: Commit coverage badge
