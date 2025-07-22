@@ -2,12 +2,13 @@ name: DesignPatterns iOS CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 env:
   SIM_DEVICE: "iPhone 16 Pro"
   SIM_OS: "18.5"
   DEST: "platform=iOS Simulator,name=iPhone 16 Pro,OS=18.5,arch=arm64"
+  DERIVED_DATA: ${{ runner.temp }}/dd
 
 jobs:
   build-test:
@@ -17,148 +18,145 @@ jobs:
     timeout-minutes: 180
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Select Xcode 16.4
-      run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      - name: Select Xcode 16.4
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
-    - name: Cache Swift Packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.swiftpm
-          ~/Library/Developer/Xcode/DerivedData/WorkspaceArtifacts/*
-          ~/Library/Developer/Xcode/DerivedData/ModuleCache
-        key: macOS-spm-${{ hashFiles('**/Package.resolved') }}
-        restore-keys: macOS-spm-
+      - name: Cache Swift Packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.swiftpm
+            ~/Library/Developer/Xcode/DerivedData/WorkspaceArtifacts/*
+            ~/Library/Developer/Xcode/DerivedData/ModuleCache
+          key: macOS-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: macOS-spm-
 
-    - name: Build for testing
-      run: |
-        xcodebuild build-for-testing \
-          -project DesignPatterns/DesignPatterns.xcodeproj \
-          -scheme DesignPatterns \
-          -destination "$DEST" \
-          -enableCodeCoverage YES
+      - name: Build for testing
+        run: |
+          xcodebuild build-for-testing \
+            -project DesignPatterns/DesignPatterns.xcodeproj \
+            -scheme DesignPatterns \
+            -destination "$DEST" \
+            -derivedDataPath "$DERIVED_DATA" \
+            -enableCodeCoverage YES
 
-    - name: Run Unit Tests
-      run: |
-        xcodebuild test-without-building \
-          -project DesignPatterns/DesignPatterns.xcodeproj \
-          -scheme DesignPatterns \
-          -destination "$DEST" \
-          -only-testing:DesignPatternsTests \
-          -parallel-testing-enabled YES \
-          -maximum-concurrent-test-simulator-destinations 2 \
-          -enableCodeCoverage YES
+      - name: Run Unit Tests
+        run: |
+          xcodebuild test-without-building \
+            -project DesignPatterns/DesignPatterns.xcodeproj \
+            -scheme DesignPatterns \
+            -destination "$DEST" \
+            -only-testing:DesignPatternsTests \
+            -parallel-testing-enabled YES \
+            -maximum-concurrent-test-simulator-destinations 2 \
+            -derivedDataPath "$DERIVED_DATA" \
+            -enableCodeCoverage YES
 
-    - name: Run Snapshot Tests
-      run: |
-        xcodebuild test-without-building \
-          -project DesignPatterns/DesignPatterns.xcodeproj \
-          -scheme DesignPatterns \
-          -destination "$DEST" \
-          -only-testing:DesignPatternsSnapshotTests \
-          -parallel-testing-enabled NO \
-          -maximum-concurrent-test-simulator-destinations 1 \
-          -enableCodeCoverage YES
+      - name: Run Snapshot Tests
+        run: |
+          xcodebuild test-without-building \
+            -project DesignPatterns/DesignPatterns.xcodeproj \
+            -scheme DesignPatterns \
+            -destination "$DEST" \
+            -only-testing:DesignPatternsSnapshotTests \
+            -parallel-testing-enabled NO \
+            -maximum-concurrent-test-simulator-destinations 1 \
+            -derivedDataPath "$DERIVED_DATA" \
+            -enableCodeCoverage YES
 
-    - name: Run UI Tests
-      run: |
-        xcodebuild test-without-building \
-          -project DesignPatterns/DesignPatterns.xcodeproj \
-          -scheme DesignPatterns \
-          -destination "$DEST" \
-          -only-testing:DesignPatternsUITests \
-          -parallel-testing-enabled NO \
-          -maximum-concurrent-test-simulator-destinations 1 \
-          -enableCodeCoverage YES
+      - name: Run UI Tests
+        run: |
+          xcodebuild test-without-building \
+            -project DesignPatterns/DesignPatterns.xcodeproj \
+            -scheme DesignPatterns \
+            -destination "$DEST" \
+            -only-testing:DesignPatternsUITests \
+            -parallel-testing-enabled NO \
+            -maximum-concurrent-test-simulator-destinations 1 \
+            -derivedDataPath "$DERIVED_DATA" \
+            -enableCodeCoverage YES
 
-    - name: Extract coverage %
-      id: cov
-      run: |
-        cd DesignPatterns
-    
-        SETTINGS=$(xcodebuild \
-                    -project DesignPatterns.xcodeproj \
-                    -scheme  DesignPatterns \
-                    -showBuildSettings)
-    
-        BUILD_ROOT=$(echo "$SETTINGS" | awk '/ BUILD_ROOT / {print $3}')
-        PRODUCTS_DIR=$(echo "$SETTINGS" | awk '/ BUILT_PRODUCTS_DIR / {print $3}')
-    
-        PROFDATA=$(find "$BUILD_ROOT"/ProfileData -name '*.profdata' | head -1)
-    
-        APP=$(find "$PRODUCTS_DIR" -name 'DesignPatterns.app' -type d | head -1)
-    
-        if [[ -z "$PROFDATA" || -z "$APP" ]]; then
-          echo "::error::Coverage artifacts not found"
-          echo "PROFDATA = $PROFDATA"
-          echo "APP      = $APP"
-          exit 1
-        fi
-    
-        PCT=$(xcrun llvm-cov export -summary-only \
-                -instr-profile "$PROFDATA" "$APP" \
+      - name: Extract coverage %
+        id: cov
+        run: |
+          set -euo pipefail
+
+          PROFDATA=$(ls -t "$DERIVED_DATA"/Build/ProfileData/*/*.profdata 2>/dev/null | head -1 || true)
+          APP=$(find "$DERIVED_DATA"/Build/Products -type d -name 'DesignPatterns.app' -print -quit)
+
+          if [[ -z "$PROFDATA" || -z "$APP" ]]; then
+            echo "::error::Coverage artifacts not found"
+            echo "PROFDATA = $PROFDATA"
+            echo "APP      = $APP"
+            exit 1
+          fi
+
+          PCT=$(xcrun llvm-cov export -summary-only \
+                  -instr-profile "$PROFDATA" "$APP" \
                 | awk '/line.*percent:/ {printf "%.1f",$3*100}')
-    
-        [[ -z "$PCT" ]] && PCT="0.0"
-        echo "percent=$PCT" >> "$GITHUB_OUTPUT"
 
-    - name: Save badge json
-      run: |
-        mkdir -p docs
-        PCT="${{ steps.cov.outputs.percent }}"
+          [[ -z "$PCT" ]] && PCT="0.0"
+          echo "percent=$PCT" >> "$GITHUB_OUTPUT"
 
-        PCT=$(echo "$PCT" | tr -d '[:space:]')
+      - name: Save badge json
+        run: |
+          set -euo pipefail
+          mkdir -p docs
 
-        if awk "BEGIN {exit !($PCT >= 90)}"; then
-          COLOR="brightgreen"
-        elif awk "BEGIN {exit !($PCT >= 80)}"; then
-          COLOR="green"
-        elif awk "BEGIN {exit !($PCT >= 70)}"; then
-          COLOR="yellowgreen"
-        elif awk "BEGIN {exit !($PCT >= 60)}"; then
-          COLOR="yellow"
-        elif awk "BEGIN {exit !($PCT >= 50)}"; then
-          COLOR="orange"
-        else
-          COLOR="red"
-        fi
+          PCT="${{ steps.cov.outputs.percent }}"
+          PCT=$(echo "$PCT" | tr -d '[:space:]')
 
-        cat > docs/coverage.json <<EOF
-        {
-          "schemaVersion": 1,
-          "label": "coverage",
-          "message": "${PCT}%",
-          "color": "${COLOR}"
-        }
-        EOF
+          if awk "BEGIN {exit !($PCT >= 90)}"; then
+            COLOR="brightgreen"
+          elif awk "BEGIN {exit !($PCT >= 80)}"; then
+            COLOR="green"
+          elif awk "BEGIN {exit !($PCT >= 70)}"; then
+            COLOR="yellowgreen"
+          elif awk "BEGIN {exit !($PCT >= 60)}"; then
+            COLOR="yellow"
+          elif awk "BEGIN {exit !($PCT >= 50)}"; then
+            COLOR="orange"
+          else
+            COLOR="red"
+          fi
 
-        echo "Generated docs/coverage.json:"
-        cat docs/coverage.json
+          cat > docs/coverage.json <<EOF
+          {
+            "schemaVersion": 1,
+            "label": "coverage",
+            "message": "${PCT}%",
+            "color": "${COLOR}"
+          }
+          EOF
 
-    - name: Commit coverage badge
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: "ci: coverage badge updated [skip ci]"
-        file_pattern: docs/coverage.json
+          echo "Generated docs/coverage.json:"
+          cat docs/coverage.json
 
-    - name: Shutdown simulators
-      run: xcrun simctl shutdown all || true
+      - name: Commit coverage badge
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci: coverage badge updated [skip ci]"
+          file_pattern: docs/coverage.json
 
-    - name: Install fastlane
-      run: brew install fastlane
+      - name: Shutdown simulators
+        if: always()
+        run: xcrun simctl shutdown all || true
 
-    - name: Take screenshots
-      env:
-        FASTLANE_SKIP_UPDATE_CHECK: true
-      run: |
-        fastlane snapshot --verbose \
-          --scheme FastlaneSnapshots \
-          --devices "$SIM_DEVICE"
+      - name: Install fastlane
+        run: brew install fastlane
 
-    - name: Commit updated screenshots
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: "ci: snapshots updated [skip ci]"
-        file_pattern: docs/screenshots/*
+      - name: Take screenshots
+        env:
+          FASTLANE_SKIP_UPDATE_CHECK: true
+        run: |
+          fastlane snapshot --verbose \
+            --scheme FastlaneSnapshots \
+            --devices "$SIM_DEVICE"
+
+      - name: Commit updated screenshots
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci: snapshots updated [skip ci]"
+          file_pattern: docs/screenshots/*
