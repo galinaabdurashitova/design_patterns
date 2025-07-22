@@ -84,40 +84,47 @@ jobs:
 
       - name: Extract coverage and build badge
         id: cov
+        shell: bash
         run: |
-          set -eo pipefail
-          shopt -s nullglob
+          set -euo pipefail
 
-          mapfile -t BUNDLES < <(find "$DERIVED_DATA" -type d -name "*.xcresult")
-          if [ ${#BUNDLES[@]} -eq 0 ]; then
-            echo "No .xcresult bundles found under $DERIVED_DATA" >&2
-            find "$DERIVED_DATA" -maxdepth 4 -type d -print
+          mkdir -p coverage/json
+
+          bundles=$(find "$DERIVED_DATA" -type d -name "*.xcresult" 2>/dev/null || true)
+          if [ -z "$bundles" ]; then
+            echo "no .xcresult found under $DERIVED_DATA" >&2
+            find "$DERIVED_DATA" -type d -maxdepth 4 -print || true
             exit 1
           fi
 
-          mkdir -p coverage/json
-          for B in "${BUNDLES[@]}"; do
-            xcrun xccov view --report --json "$B" > "coverage/json/$(basename "$B").json"
+          for B in $bundles; do
+            base=$(basename "$B")
+            xcrun xccov view --report --json "$B" > "coverage/json/${base}.json"
           done
 
-          files=(coverage/json/*.json)
-          if [ ${#files[@]} -eq 0 ]; then
-            echo "No coverage json files produced" >&2
+          files=$(ls coverage/json/*.json 2>/dev/null || true)
+          if [ -z "$files" ]; then
+            echo "no coverage json files produced" >&2
             exit 1
           fi
 
           COV=$(jq -s '
-            [.[].targets[] | select(.lineCoverage != null)]
-            | group_by(.name)
-            | map(max_by(.lineCoverage).lineCoverage)
-            | add / length * 100
-          ' "${files[@]}")
+            [.[].targets[]? | select(.lineCoverage != null)]
+            | if length == 0 then 0
+              else (map(.lineCoverage) | add / length * 100)
+              end
+          ' $files)
 
           printf "%.2f\n" "$COV" > coverage.txt
           echo "coverage=$COV" >> "$GITHUB_OUTPUT"
 
           P=$(printf "%.0f" "$COV")
-          if (( P < 60 )); then COLOR=red; elif (( P < 80 )); then COLOR=yellow; else COLOR=brightgreen; fi
+          case $P in
+            [0-5][0-9]) COLOR=red ;;
+            6[0-9]|7[0-9]) COLOR=yellow ;;
+            *) COLOR=brightgreen ;;
+          esac
+
           curl -s "https://img.shields.io/badge/coverage-${P}%25-${COLOR}.svg" > coverage-badge.svg
 
       - name: Commit coverage badge
