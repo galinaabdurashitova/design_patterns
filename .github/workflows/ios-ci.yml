@@ -2,13 +2,12 @@ name: DesignPatterns iOS CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 env:
   SIM_DEVICE: "iPhone 16 Pro"
   SIM_OS: "18.5"
   DEST: "platform=iOS Simulator,name=iPhone 16 Pro,OS=18.5,arch=arm64"
-  DERIVED_DATA: ${{ runner.temp }}/dd
 
 jobs:
   build-test:
@@ -16,6 +15,9 @@ jobs:
     permissions:
       contents: write
     timeout-minutes: 180
+    env:
+      DERIVED_DATA: ${{ github.workspace }}/.derived
+      RESULT_BUNDLE: ${{ github.workspace }}/TestResults.xcresult
 
     steps:
       - uses: actions/checkout@v4
