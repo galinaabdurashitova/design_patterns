@@ -79,6 +79,37 @@ jobs:
             -derivedDataPath "$DERIVED_DATA" \
             -enableCodeCoverage YES
 
+      - name: Extract coverage and build badge
+        id: cov
+        run: |
+          mkdir -p coverage/json
+          for B in "$DERIVED_DATA"/*Results.xcresult; do
+            [ -d "$B" ] || continue
+            xcrun xccov view --report --json "$B" > "coverage/json/$(basename "$B").json"
+          done
+
+          COV=$(jq -s '
+            [.[].targets[]]
+            | group_by(.name)
+            | map({name:.[0].name, lineCoverage:(map(.lineCoverage)|max)})
+            | [.[].lineCoverage]
+            | add / length * 100
+          ' coverage/json/*.json)
+
+          printf "%.2f\n" "$COV" > coverage.txt
+          echo "coverage=$COV" >> "$GITHUB_OUTPUT"
+
+          P=$(printf "%.0f" "$COV")
+          if (( P < 60 )); then COLOR=red; elif (( P < 80 )); then COLOR=yellow; else COLOR=brightgreen; fi
+          curl -s "https://img.shields.io/badge/coverage-${P}%25-${COLOR}.svg" > coverage-badge.svg
+
+      - name: Commit coverage badge
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci: update coverage badge [skip ci]"
+          file_pattern: coverage-badge.svg coverage.txt
+
       - name: Shutdown simulators
         if: always()
         run: xcrun simctl shutdown all || true
