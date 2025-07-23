@@ -1,6 +1,6 @@
 # DesignPatterns App (SwiftUI + Clean Architecture) — currently WIP
 
-[![CI](https://github.com/galinaabdurashitova/design_patterns/actions/workflows/ios-ci.yml/badge.svg?branch=main)](https://github.com/galinaabdurashitova/design_patterns/actions/workflows/ios-ci.yml) ![coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/galinaabdurashitova/design_patterns/main/docs/coverage.json)
+[![CI](https://github.com/galinaabdurashitova/design_patterns/actions/workflows/ios-ci.yml/badge.svg?branch=main)](https://github.com/galinaabdurashitova/design_patterns/actions/workflows/ios-ci.yml) ![coverage](./coverage-badge.svg)
 
 This is a demo iOS application built with **SwiftUI** that demonstrates the **real-world use of software design patterns** in a clean, modular architecture.
 
@@ -17,6 +17,7 @@ The application was created with the goal of showcasing:
 ## ✨ Features
 
 - 📋 **List of software design patterns**, categorized by type
+- 🧱 Add **new design pattern** to the list
 - 🚦 **State-driven UI** using a generic `UIState<T>` enum
 - 🔍 Debounced and composable **filtering logic** via Specification pattern
 - 🧰 **Combine-driven** state observation with @Published + debounce
@@ -43,11 +44,18 @@ You can find all patterns in action inside:
 ## 🧪 UI Preview
 
 <p align="center">
-  <img src="screenshots/1_main_screen.png" width="160"/>
-  <img src="screenshots/2_design_pattern_view.png" width="160"/>
-  <img src="screenshots/3_search.png" width="160"/>
-  <img src="screenshots/4_type_filter_bottom_sheet.png" width="160"/>
-  <img src="screenshots/5_type_filter_applied.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-DesignPatternsList_01_ListView.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-DesignPatternsList_02_PatternView_Builder.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-DesignPatternsList_03_ListView_search.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-DesignPatternsList_04_FilterBottomSheet.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-DesignPatternsList_05_ListView_filtered.png" width="160"/>
+</p>
+<p align="center">
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-NewPattern_01_NewPatternName.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-NewPattern_02_NewPatternType.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-NewPattern_03_NewPatternDescription.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-NewPattern_05_NewPatternCodeExamples.png" width="160"/>
+  <img src="docs/screenshots/en-US/iPhone 16 Pro-NewPattern_06_NewPatternConfirm.png" width="160"/>
 </p>
 
 ---

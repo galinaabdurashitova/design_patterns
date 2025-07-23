@@ -1,0 +1,62 @@
+{
+  "configurations" : [
+    {
+      "id" : "EBCCD128-F72B-4664-AD69-6C453C2646FD",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:DesignPatterns.xcodeproj",
+          "identifier" : "2A08E5E52DCD455E008E90A2",
+          "name" : "DesignPatterns"
+        }
+      ]
+    },
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:DesignPatterns.xcodeproj",
+      "identifier" : "2A08E5E52DCD455E008E90A2",
+      "name" : "DesignPatterns"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:DesignPatterns.xcodeproj",
+        "identifier" : "2A08E5F22DCD4561008E90A2",
+        "name" : "DesignPatternsTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:DesignPatterns.xcodeproj",
+        "identifier" : "2A08E5FC2DCD4561008E90A2",
+        "name" : "DesignPatternsUITests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:DesignPatterns.xcodeproj",
+        "identifier" : "2AD0CFFD2E1183F7009A93A3",
+        "name" : "DesignPatternsSnapshotTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:DesignPatterns.xcodeproj",
+        "identifier" : "2A1984152E2AA10A00AE6F14",
+        "name" : "FastlaneSnapshots"
+      }
+    }
+  ],
+  "version" : 1
+}
