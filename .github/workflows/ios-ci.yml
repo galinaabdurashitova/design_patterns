@@ -133,24 +133,3 @@ jobs:
         with:
           commit_message: "ci: update coverage badge [skip ci]"
           file_pattern: coverage-badge.svg coverage.txt
-
-      - name: Shutdown simulators
-        if: always()
-        run: xcrun simctl shutdown all || true
-
-      - name: Install fastlane
-        run: brew install fastlane
-
-      - name: Take screenshots
-        env:
-          FASTLANE_SKIP_UPDATE_CHECK: true
-        run: |
-          fastlane snapshot --verbose \
-            --scheme FastlaneSnapshots \
-            --devices "$SIM_DEVICE"
-
-      - name: Commit updated screenshots
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "ci: snapshots updated [skip ci]"
-          file_pattern: docs/screenshots/*
