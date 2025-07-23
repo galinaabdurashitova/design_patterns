@@ -1,0 +1,48 @@
+name: Screenshots (manual)
+
+on:
+  workflow_dispatch:
+
+env:
+  SIM_DEVICE: "iPhone 16 Pro"
+  SIM_OS: "18.5"
+  DEST: "platform=iOS Simulator,name=iPhone 16 Pro,OS=18.5,arch=arm64"
+
+jobs:
+  screenshots:
+    runs-on: macos-15
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16.4
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - name: Cache Swift Packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.swiftpm
+            ~/Library/Developer/Xcode/DerivedData/WorkspaceArtifacts/*
+            ~/Library/Developer/Xcode/DerivedData/ModuleCache
+          key: macOS-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: macOS-spm-
+
+      - name: Install fastlane
+        run: brew install fastlane
+
+      - name: Take screenshots
+        env:
+          FASTLANE_SKIP_UPDATE_CHECK: true
+        run: |
+          fastlane snapshot --verbose \
+            --scheme FastlaneSnapshots \
+            --devices "$SIM_DEVICE"
+
+      - name: Commit updated screenshots
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci: snapshots updated [skip ci]"
+          file_pattern: docs/screenshots/*
